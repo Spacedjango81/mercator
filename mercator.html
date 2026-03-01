@@ -11,6 +11,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* ── TODO: REDESIGN THEME ─────────────────────────────────────────
+       The current dark theme works well for night driving but needs
+       a brighter, more ergonomic daytime layout. Future work:
+       - Light/warm colour palette (off-whites, soft greys, vivid accents)
+       - Higher contrast text at a glance (larger stop numbers, bolder address)
+       - Bigger tap targets for use with gloves / one-handed
+       - Consider a high-visibility "driving mode" toggle
+       ──────────────────────────────────────────────────────────────── */
+
     :root {
       --bg: #0a0a0f;
       --surface: #12121a;
@@ -27,11 +36,12 @@
       --red: #ef4444;
       --red-dim: rgba(239,68,68,0.12);
       --cyan: #06b6d4;
+      --purple: #a855f7;
       --mono: 'Space Mono', monospace;
       --sans: 'DM Sans', sans-serif;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin:0; padding:0; box-sizing:border-box; }
 
     body {
       font-family: var(--sans);
@@ -43,304 +53,410 @@
     }
 
     body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 9999;
-      opacity: 0.4;
+      content:''; position:fixed; inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events:none; z-index:9999; opacity:0.4;
     }
 
-    .app { max-width: 480px; margin: 0 auto; padding-bottom: 30px; }
+    .app { max-width:480px; margin:0 auto; padding-bottom:30px; }
 
+    /* ── DESIGN TODO BANNER ── */
+    .design-todo {
+      background: linear-gradient(90deg, rgba(168,85,247,0.15), rgba(91,91,214,0.1));
+      border-bottom: 1px solid rgba(168,85,247,0.25);
+      padding: 8px 16px;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; color: rgba(168,85,247,0.9);
+      font-family: var(--mono);
+    }
+    .design-todo button {
+      margin-left: auto; background: none; border: none;
+      color: rgba(168,85,247,0.6); cursor: pointer; font-size: 14px; line-height: 1;
+    }
+
+    /* ── HEADER ── */
     .header {
-      padding: 18px 20px 14px;
+      padding: 14px 18px 12px;
       display: flex; align-items: center; justify-content: space-between;
       border-bottom: 1px solid var(--border);
       position: sticky; top: 0;
-      background: rgba(10,10,15,0.95);
+      background: rgba(10,10,15,0.97);
       backdrop-filter: blur(20px);
       z-index: 100;
     }
-
-    .header-left { display: flex; align-items: center; gap: 12px; }
-
+    .header-left { display:flex; align-items:center; gap:10px; }
     .logo-mark {
-      width: 34px; height: 34px;
-      background: var(--accent);
-      border-radius: 9px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 17px;
-      box-shadow: 0 0 20px var(--accent-glow);
-      flex-shrink: 0;
+      width:32px; height:32px; background:var(--accent); border-radius:8px;
+      display:flex; align-items:center; justify-content:center; font-size:16px;
+      box-shadow:0 0 18px var(--accent-glow); flex-shrink:0;
     }
+    .header h1 { font-family:var(--mono); font-size:13px; font-weight:700; }
+    .header h1 span { display:block; font-size:9px; font-weight:400; color:var(--text-muted); letter-spacing:0.5px; text-transform:uppercase; margin-top:1px; }
 
-    .header h1 { font-family: var(--mono); font-size: 14px; font-weight: 700; }
-    .header h1 span {
-      display: block; font-size: 10px; font-weight: 400;
-      color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; margin-top: 1px;
-    }
+    .header-right { display:flex; align-items:center; gap:8px; }
 
     .gps-pill {
-      display: flex; align-items: center; gap: 6px;
-      padding: 5px 11px; border-radius: 100px;
-      background: var(--surface); border: 1px solid var(--border);
-      font-family: var(--mono); font-size: 10px; color: var(--text-muted);
-      transition: all 0.3s; cursor: pointer;
+      display:flex; align-items:center; gap:5px; padding:5px 10px; border-radius:100px;
+      background:var(--surface); border:1px solid var(--border);
+      font-family:var(--mono); font-size:10px; color:var(--text-muted);
+      transition:all 0.3s; cursor:pointer; white-space:nowrap;
     }
     .gps-pill.active { background:var(--green-dim); border-color:rgba(34,197,94,0.3); color:var(--green); }
-    .gps-pill.error  { background:var(--red-dim);   border-color:rgba(239,68,68,0.3);  color:var(--red); }
-    .gps-dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
-    .gps-pill.active .gps-dot { animation: blink 1.5s ease-in-out infinite; }
-    @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+    .gps-pill.error  { background:var(--red-dim); border-color:rgba(239,68,68,0.3); color:var(--red); }
+    .gps-dot { width:5px; height:5px; border-radius:50%; background:currentColor; }
+    .gps-pill.active .gps-dot { animation:blink 1.5s ease-in-out infinite; }
+    @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.6)} }
 
+    /* ── SHIFT PILL in header ── */
+    .shift-pill {
+      display:flex; align-items:center; gap:5px; padding:5px 10px; border-radius:100px;
+      background:var(--surface); border:1px solid var(--border);
+      font-family:var(--mono); font-size:10px; color:var(--text-muted);
+      cursor:pointer; white-space:nowrap; transition:all 0.3s;
+    }
+    .shift-pill.running { background:rgba(245,158,11,0.12); border-color:rgba(245,158,11,0.3); color:var(--amber); }
+
+    /* ── TABS ── */
     .tabs {
-      display: flex; border-bottom: 1px solid var(--border);
-      background: rgba(10,10,15,0.9); backdrop-filter: blur(20px);
-      position: sticky; top: 67px; z-index: 99;
+      display:flex; border-bottom:1px solid var(--border);
+      background:rgba(10,10,15,0.92); backdrop-filter:blur(20px);
+      position:sticky; top:58px; z-index:99;
     }
-
     .tab-btn {
-      flex: 1; padding: 12px 8px; background: none; border: none;
-      border-bottom: 2px solid transparent; color: var(--text-muted);
-      font-family: var(--sans); font-size: 12px; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s;
+      flex:1; padding:11px 6px; background:none; border:none;
+      border-bottom:2px solid transparent; color:var(--text-muted);
+      font-family:var(--sans); font-size:11px; font-weight:600;
+      text-transform:uppercase; letter-spacing:0.4px; cursor:pointer; transition:all 0.2s;
     }
-    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+    .tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
 
-    .container { padding: 18px; }
+    .container { padding:16px; }
 
+    /* ── HERO ── */
     .hero-card {
-      background: linear-gradient(135deg, rgba(91,91,214,0.13) 0%, rgba(6,182,212,0.06) 100%);
-      border: 1px solid rgba(91,91,214,0.28);
-      border-radius: 18px; padding: 22px; margin-bottom: 16px;
-      position: relative; overflow: hidden;
+      background:linear-gradient(135deg, rgba(91,91,214,0.13) 0%, rgba(6,182,212,0.06) 100%);
+      border:1px solid rgba(91,91,214,0.28); border-radius:18px; padding:20px; margin-bottom:14px;
+      position:relative; overflow:hidden;
     }
     .hero-card::before {
-      content: ''; position: absolute; top: -40px; right: -40px;
-      width: 130px; height: 130px;
-      background: radial-gradient(circle, rgba(91,91,214,0.18) 0%, transparent 70%);
-      border-radius: 50%;
+      content:''; position:absolute; top:-40px; right:-40px; width:130px; height:130px;
+      background:radial-gradient(circle, rgba(91,91,214,0.18) 0%, transparent 70%); border-radius:50%;
     }
     .hero-label {
-      font-family: var(--mono); font-size: 10px; color: var(--accent);
-      letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;
-      display: flex; align-items: center; gap: 8px;
+      font-family:var(--mono); font-size:9px; color:var(--accent);
+      letter-spacing:2px; text-transform:uppercase; margin-bottom:8px;
+      display:flex; align-items:center; gap:8px;
     }
-    .hero-label::after { content:''; flex:1; height:1px; background:rgba(91,91,214,0.25); }
-    .hero-address { font-size: 20px; font-weight: 700; line-height: 1.3; margin-bottom: 14px; }
-    .hero-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+    .hero-label::after { content:''; flex:1; height:1px; background:rgba(91,91,214,0.22); }
+    .hero-address { font-size:19px; font-weight:700; line-height:1.3; margin-bottom:6px; }
+    .hero-note { font-size:12px; color:var(--amber); margin-bottom:12px; min-height:0; display:flex; align-items:center; gap:5px; }
+    .hero-meta { display:flex; align-items:center; gap:7px; margin-bottom:16px; flex-wrap:wrap; }
 
     .distance-chip {
-      display: flex; align-items: center; gap: 6px;
-      padding: 5px 11px; background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 100px; font-family: var(--mono); font-size: 11px; font-weight: 700;
+      display:flex; align-items:center; gap:5px; padding:4px 10px;
+      background:var(--surface2); border:1px solid var(--border);
+      border-radius:100px; font-family:var(--mono); font-size:11px; font-weight:700;
     }
     .distance-chip.close  { background:var(--green-dim); border-color:rgba(34,197,94,0.4); color:var(--green); }
     .distance-chip.medium { background:var(--amber-dim); border-color:rgba(245,158,11,0.4); color:var(--amber); }
 
-    .type-chip, .platform-chip {
-      padding: 5px 11px; border-radius: 100px;
-      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px;
-    }
+    .type-chip,.platform-chip { padding:4px 10px; border-radius:100px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px; }
     .type-chip.pickup   { background:rgba(6,182,212,0.13); color:var(--cyan); border:1px solid rgba(6,182,212,0.28); }
     .type-chip.dropoff  { background:var(--green-dim); color:var(--green); border:1px solid rgba(34,197,94,0.28); }
-    .platform-chip.ubereats   { background:rgba(239,68,68,0.1); color:#f87171; border:1px solid rgba(239,68,68,0.2); }
-    .platform-chip.deliveroo  { background:rgba(236,72,153,0.1); color:#f472b6; border:1px solid rgba(236,72,153,0.2); }
+    .platform-chip.ubereats  { background:rgba(239,68,68,0.1); color:#f87171; border:1px solid rgba(239,68,68,0.2); }
+    .platform-chip.deliveroo { background:rgba(236,72,153,0.1); color:#f472b6; border:1px solid rgba(236,72,153,0.2); }
 
-    .hero-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+    .hero-actions { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:9px; }
 
+    /* ── BUTTONS ── */
     .btn {
-      padding: 13px; border: none; border-radius: 11px;
-      font-family: var(--sans); font-size: 14px; font-weight: 600;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px;
-      transition: all 0.15s;
+      padding:12px; border:none; border-radius:11px;
+      font-family:var(--sans); font-size:13px; font-weight:600;
+      cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;
+      transition:all 0.15s;
     }
-    .btn:active { transform: scale(0.97); }
-    .btn-nav-google { background: white; color: #1a73e8; }
-    .btn-nav-waze   { background: #33ccff; color: #0a0a0f; }
-    .btn-complete   { width:100%; background:var(--surface2); border:1px solid var(--border); color:var(--text-muted); font-size:13px; }
+    .btn:active { transform:scale(0.97); }
+    .btn-nav-google { background:white; color:#1a73e8; }
+    .btn-nav-waze   { background:#33ccff; color:#0a0a0f; }
+    .btn-complete   { width:100%; background:var(--surface2); border:1px solid var(--border); color:var(--text-muted); font-size:12px; }
     .btn-complete:hover { border-color:var(--green); color:var(--green); background:var(--green-dim); }
-    .btn-start      { width:100%; background:var(--accent); color:white; font-size:15px; padding:17px; border-radius:13px; box-shadow:0 0 28px var(--accent-glow); margin-top:14px; }
-    .btn-primary    { background:var(--accent); color:white; width:100%; padding:15px; border-radius:11px; }
+    .btn-start      { width:100%; background:var(--accent); color:white; font-size:15px; padding:16px; border-radius:13px; box-shadow:0 0 26px var(--accent-glow); margin-top:12px; }
+    .btn-primary    { background:var(--accent); color:white; width:100%; padding:14px; border-radius:11px; }
     .btn-danger     { background:var(--red-dim); border:1px solid rgba(239,68,68,0.3); color:var(--red); width:100%; margin-top:10px; }
     .btn-cancel     { background:var(--surface2); border:1px solid var(--border); color:var(--text-muted); }
+    .btn-amber      { background:var(--amber-dim); border:1px solid rgba(245,158,11,0.3); color:var(--amber); width:100%; }
 
-    .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
-    .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:13px; padding:14px 10px; text-align:center; }
-    .stat-card .val { font-family:var(--mono); font-size:26px; font-weight:700; line-height:1; margin-bottom:4px; }
-    .stat-card .lbl { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; font-weight:600; }
-    .stat-card.green .val { color:var(--green); }
+    /* ── STATS ── */
+    .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:14px; }
+    .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 8px; text-align:center; cursor:default; }
+    .stat-card .val { font-family:var(--mono); font-size:24px; font-weight:700; line-height:1; margin-bottom:3px; }
+    .stat-card .lbl { font-size:9px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; font-weight:600; }
+    .stat-card.green .val  { color:var(--green); }
     .stat-card.accent .val { color:var(--accent); }
-    .stat-card.amber .val { color:var(--amber); }
+    .stat-card.amber .val  { color:var(--amber); }
 
+    /* ── ARRIVAL ALERT ── */
     .arrival-alert {
       background:var(--green-dim); border:1px solid rgba(34,197,94,0.3);
-      border-radius:13px; padding:14px; margin-bottom:14px;
-      display:flex; align-items:center; gap:12px; animation:slideIn 0.3s ease;
+      border-radius:12px; padding:13px; margin-bottom:12px;
+      display:flex; align-items:center; gap:10px; animation:slideIn 0.3s ease;
     }
-    .arrival-alert .icon { font-size:26px; }
-    .arrival-alert h4 { font-size:14px; font-weight:700; color:var(--green); margin-bottom:2px; }
-    .arrival-alert p  { font-size:12px; color:var(--text-muted); }
+    .arrival-alert .icon { font-size:24px; }
+    .arrival-alert h4 { font-size:13px; font-weight:700; color:var(--green); margin-bottom:1px; }
+    .arrival-alert p  { font-size:11px; color:var(--text-muted); }
 
+    /* ── SHIFT PANEL ── */
+    .shift-panel {
+      background:var(--surface); border:1px solid var(--border); border-radius:15px;
+      padding:16px; margin-bottom:14px;
+    }
+    .shift-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .shift-header h3 { font-family:var(--mono); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); }
+    .shift-timer { font-family:var(--mono); font-size:32px; font-weight:700; color:var(--amber); letter-spacing:2px; text-align:center; margin-bottom:14px; }
+    .shift-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+    .shift-stat { text-align:center; }
+    .shift-stat .sv { font-family:var(--mono); font-size:18px; font-weight:700; color:var(--text); }
+    .shift-stat .sl { font-size:9px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.4px; margin-top:2px; }
+    .shift-stat .sv.green { color:var(--green); }
+    .shift-actions { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+
+    /* ── EARNINGS PANEL ── */
+    .earnings-panel {
+      background:var(--surface); border:1px solid var(--border); border-radius:15px;
+      padding:16px; margin-bottom:14px;
+    }
+    .earnings-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .earnings-header h3 { font-family:var(--mono); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); }
+    .earnings-big { text-align:center; margin-bottom:14px; }
+    .earnings-big .amount { font-family:var(--mono); font-size:40px; font-weight:700; color:var(--green); }
+    .earnings-big .label  { font-size:11px; color:var(--text-muted); margin-top:2px; }
+    .earnings-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:9px; margin-bottom:14px; }
+    .e-stat { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:12px; text-align:center; }
+    .e-stat .ev { font-family:var(--mono); font-size:16px; font-weight:700; color:var(--text); }
+    .e-stat .el { font-size:9px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.3px; margin-top:2px; }
+    .e-stat.green .ev { color:var(--green); }
+
+    .earn-input-row { display:grid; grid-template-columns:1fr auto; gap:8px; }
+    .earn-input-row input {
+      padding:11px 13px; background:var(--surface2); border:1px solid var(--border);
+      border-radius:9px; color:var(--text); font-family:var(--mono); font-size:14px;
+    }
+    .earn-input-row input:focus { outline:none; border-color:var(--green); }
+    .btn-log-earn {
+      padding:11px 16px; background:var(--green-dim); border:1px solid rgba(34,197,94,0.3);
+      color:var(--green); border-radius:9px; font-weight:700; font-size:13px;
+      cursor:pointer; white-space:nowrap;
+    }
+
+    /* ── UPLOAD ZONE ── */
     .upload-zone {
-      border: 2px dashed rgba(91,91,214,0.3); border-radius:15px;
-      padding: 28px 18px; text-align:center; cursor:pointer;
-      transition:all 0.2s; background:rgba(91,91,214,0.04); margin-bottom:16px;
+      border:2px dashed rgba(91,91,214,0.3); border-radius:14px;
+      padding:26px 16px; text-align:center; cursor:pointer;
+      transition:all 0.2s; background:rgba(91,91,214,0.04); margin-bottom:14px;
     }
     .upload-zone:hover { border-color:var(--accent); background:rgba(91,91,214,0.08); }
     .upload-zone input { display:none; }
-    .upload-icon { font-size:38px; margin-bottom:10px; display:block; }
-    .upload-zone h3 { font-size:15px; font-weight:600; margin-bottom:4px; }
+    .upload-icon { font-size:36px; margin-bottom:9px; display:block; }
+    .upload-zone h3 { font-size:14px; font-weight:600; margin-bottom:3px; }
     .upload-zone p  { font-size:12px; color:var(--text-muted); }
 
+    /* ── API KEY ── */
     .api-key-card {
       background:var(--surface); border:1px solid rgba(245,158,11,0.3);
-      border-radius:14px; padding:18px; margin-bottom:16px;
+      border-radius:13px; padding:16px; margin-bottom:14px;
     }
-    .api-key-card h3 {
-      font-family:var(--mono); font-size:11px; font-weight:700;
-      text-transform:uppercase; letter-spacing:1px; color:var(--amber); margin-bottom:8px;
-    }
-    .api-key-card p { font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.6; }
-    .api-key-card a { color:var(--accent); text-decoration:none; }
-    .key-input-row { display:flex; gap:8px; }
-    .key-input-row input {
-      flex:1; padding:11px 14px; background:var(--surface2); border:1px solid var(--border);
-      border-radius:9px; color:var(--text); font-family:var(--mono); font-size:12px;
-    }
+    .api-key-card h3 { font-family:var(--mono); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--amber); margin-bottom:7px; }
+    .api-key-card p  { font-size:12px; color:var(--text-muted); margin-bottom:11px; line-height:1.6; }
+    .api-key-card a  { color:var(--accent); text-decoration:none; }
+    .key-input-row { display:flex; gap:7px; }
+    .key-input-row input { flex:1; padding:10px 12px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:var(--mono); font-size:12px; }
     .key-input-row input:focus { outline:none; border-color:var(--accent); }
-    .btn-save-key {
-      padding:11px 16px; background:var(--accent); color:white;
-      border:none; border-radius:9px; font-weight:600; font-size:13px; cursor:pointer; white-space:nowrap;
-    }
-    .key-saved {
-      display:flex; align-items:center; gap:8px; padding:10px 14px;
-      background:var(--green-dim); border:1px solid rgba(34,197,94,0.3);
-      border-radius:9px; font-size:12px; color:var(--green); font-family:var(--mono);
-    }
+    .btn-save-key { padding:10px 14px; background:var(--accent); color:white; border:none; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer; white-space:nowrap; }
+    .key-saved { display:flex; align-items:center; gap:7px; padding:9px 13px; background:var(--green-dim); border:1px solid rgba(34,197,94,0.3); border-radius:8px; font-size:11px; color:var(--green); font-family:var(--mono); }
 
-    .form-card { background:var(--surface); border:1px solid var(--border); border-radius:15px; padding:18px; margin-bottom:16px; }
-    .form-card h3 { font-family:var(--mono); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:14px; }
+    /* ── FORM CARD ── */
+    .form-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:14px; }
+    .form-card h3 { font-family:var(--mono); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:13px; }
+    .field { margin-bottom:10px; }
+    .field label { display:block; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); margin-bottom:4px; }
+    .field-row { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
 
-    .field { margin-bottom:11px; }
-    .field label { display:block; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); margin-bottom:5px; }
-    .field-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-
-    input[type="text"], select {
-      width:100%; padding:12px 14px;
+    input[type="text"], input[type="number"], select, textarea {
+      width:100%; padding:11px 13px;
       background:var(--surface2); border:1px solid var(--border);
-      border-radius:9px; color:var(--text); font-family:var(--sans); font-size:15px;
+      border-radius:9px; color:var(--text); font-family:var(--sans); font-size:14px;
       -webkit-appearance:none; transition:border-color 0.2s;
     }
-    input[type="text"]:focus, select:focus { outline:none; border-color:var(--accent); }
-    input[type="text"]::placeholder { color:var(--text-muted); }
+    input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus { outline:none; border-color:var(--accent); }
+    input::placeholder, textarea::placeholder { color:var(--text-muted); }
     select option { background:var(--surface2); }
+    textarea { resize:none; font-size:13px; line-height:1.5; }
 
-    .img-progress-row {
-      background:var(--surface); border:1px solid var(--border);
-      border-radius:11px; padding:12px 14px; margin-bottom:8px; animation:slideIn 0.2s ease;
-    }
-    .img-progress-name { font-size:11px; font-weight:600; color:var(--text-muted); margin-bottom:7px; font-family:var(--mono); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .img-progress-bar-wrap { height:3px; background:var(--surface2); border-radius:100px; overflow:hidden; margin-bottom:6px; }
+    /* ── IMAGE PROGRESS ── */
+    .img-progress-row { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:11px 13px; margin-bottom:7px; animation:slideIn 0.2s ease; }
+    .img-progress-name { font-size:10px; font-weight:600; color:var(--text-muted); margin-bottom:6px; font-family:var(--mono); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .img-progress-bar-wrap { height:3px; background:var(--surface2); border-radius:100px; overflow:hidden; margin-bottom:5px; }
     .img-progress-bar { height:100%; background:var(--accent); border-radius:100px; width:0%; transition:width 0.4s ease, background 0.3s ease; }
-    .img-progress-status { font-size:11px; font-family:var(--mono); color:var(--text-muted); }
+    .img-progress-status { font-size:10px; font-family:var(--mono); color:var(--text-muted); }
 
-    .ocr-result {
-      background:var(--surface2); border:1px solid var(--border);
-      border-radius:11px; padding:13px; margin-bottom:9px;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-    }
+    /* ── OCR RESULTS ── */
+    .ocr-result { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:12px; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; gap:9px; }
     .ocr-address  { font-size:13px; font-weight:500; flex:1; line-height:1.4; }
-    .ocr-postcode { font-family:var(--mono); font-size:10px; color:var(--accent); margin-top:3px; }
-    .btn-sm { padding:8px 13px; border-radius:8px; font-size:12px; font-weight:600; background:var(--accent); color:white; border:none; cursor:pointer; flex-shrink:0; }
+    .ocr-postcode { font-family:var(--mono); font-size:10px; color:var(--accent); margin-top:2px; }
+    .btn-sm { padding:7px 12px; border-radius:7px; font-size:12px; font-weight:600; background:var(--accent); color:white; border:none; cursor:pointer; flex-shrink:0; }
 
-    .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-    .section-header h3 { font-family:var(--mono); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); }
-    .section-header .count { font-family:var(--mono); font-size:10px; padding:3px 8px; background:var(--surface2); border-radius:100px; color:var(--text-muted); }
+    /* ── STOPS LIST ── */
+    .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:11px; }
+    .section-header h3 { font-family:var(--mono); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); }
+    .section-header .count { font-family:var(--mono); font-size:10px; padding:2px 7px; background:var(--surface2); border-radius:100px; color:var(--text-muted); }
 
     .stop-item {
-      background:var(--surface); border:1px solid var(--border); border-radius:13px;
-      padding:14px; margin-bottom:9px; display:flex; align-items:flex-start; gap:12px;
+      background:var(--surface); border:1px solid var(--border); border-radius:12px;
+      padding:13px; margin-bottom:8px; display:flex; align-items:flex-start; gap:11px;
       transition:all 0.3s; animation:slideIn 0.3s ease;
     }
-    @keyframes slideIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes slideIn { from{opacity:0;transform:translateY(7px)} to{opacity:1;transform:translateY(0)} }
     .stop-item.completed  { opacity:0.4; }
     .stop-item.active-stop { border-color:rgba(91,91,214,0.5); background:rgba(91,91,214,0.07); }
 
-    .stop-index {
-      width:30px; height:30px; border-radius:50%;
-      background:var(--surface2); border:1px solid var(--border);
-      display:flex; align-items:center; justify-content:center;
-      font-family:var(--mono); font-size:11px; font-weight:700; color:var(--text-muted); flex-shrink:0;
-    }
-    .stop-item.active-stop .stop-index { background:var(--accent); border-color:var(--accent); color:white; box-shadow:0 0 12px var(--accent-glow); }
+    .stop-index { width:28px; height:28px; border-radius:50%; background:var(--surface2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11px; font-weight:700; color:var(--text-muted); flex-shrink:0; }
+    .stop-item.active-stop .stop-index { background:var(--accent); border-color:var(--accent); color:white; box-shadow:0 0 10px var(--accent-glow); }
     .stop-item.completed   .stop-index { background:var(--green-dim); border-color:rgba(34,197,94,0.3); color:var(--green); }
 
     .stop-body { flex:1; min-width:0; }
-    .stop-chips { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:5px; }
-    .chip { padding:3px 8px; border-radius:100px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px; }
+    .stop-chips { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:4px; }
+    .chip { padding:2px 7px; border-radius:100px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.2px; }
     .chip.pickup    { background:rgba(6,182,212,0.12); color:var(--cyan); }
     .chip.dropoff   { background:var(--green-dim); color:var(--green); }
     .chip.ubereats  { background:rgba(239,68,68,0.1); color:#f87171; }
     .chip.deliveroo { background:rgba(236,72,153,0.1); color:#f472b6; }
     .chip.done      { background:var(--green-dim); color:var(--green); }
-    .stop-address   { font-size:13px; font-weight:500; line-height:1.4; color:var(--text); }
+    .stop-address { font-size:13px; font-weight:500; line-height:1.4; color:var(--text); }
+    .stop-note    { font-size:11px; color:var(--amber); margin-top:3px; display:flex; align-items:center; gap:4px; }
 
-    .stop-actions { display:flex; flex-direction:column; gap:5px; flex-shrink:0; }
-    .icon-btn {
-      width:30px; height:30px; border:1px solid var(--border); border-radius:7px;
-      background:var(--surface2); color:var(--text-muted);
-      display:flex; align-items:center; justify-content:center;
-      cursor:pointer; font-size:13px; transition:all 0.15s;
-    }
+    .stop-actions { display:flex; flex-direction:column; gap:4px; flex-shrink:0; }
+    .icon-btn { width:28px; height:28px; border:1px solid var(--border); border-radius:7px; background:var(--surface2); color:var(--text-muted); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; transition:all 0.15s; }
     .icon-btn:hover { border-color:var(--red); color:var(--red); background:var(--red-dim); }
 
-    .empty { text-align:center; padding:50px 20px; color:var(--text-muted); }
-    .empty .empty-icon { font-size:44px; margin-bottom:10px; display:block; opacity:0.35; }
+    /* ── EMPTY ── */
+    .empty { text-align:center; padding:46px 20px; color:var(--text-muted); }
+    .empty .empty-icon { font-size:42px; margin-bottom:9px; display:block; opacity:0.3; }
 
-    .toast-container { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:2000; display:flex; flex-direction:column; gap:8px; align-items:center; }
-    .toast { padding:11px 18px; border-radius:100px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:7px; animation:toastIn 0.3s ease; white-space:nowrap; max-width:90vw; }
+    /* ── TOAST ── */
+    .toast-container { position:fixed; bottom:22px; left:50%; transform:translateX(-50%); z-index:2000; display:flex; flex-direction:column; gap:7px; align-items:center; pointer-events:none; }
+    .toast { padding:10px 16px; border-radius:100px; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; animation:toastIn 0.3s ease; white-space:nowrap; max-width:92vw; }
     .toast.success { background:#14532d; border:1px solid rgba(34,197,94,0.4); color:#4ade80; }
     .toast.error   { background:#450a0a; border:1px solid rgba(239,68,68,0.4); color:#f87171; }
     .toast.info    { background:#1e1b4b; border:1px solid rgba(91,91,214,0.4); color:#a5b4fc; }
     @keyframes toastIn { from{opacity:0;transform:translateY(8px) scale(0.92)} to{opacity:1;transform:translateY(0) scale(1)} }
 
-    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); z-index:500; align-items:flex-end; }
+    /* ── MODAL ── */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.72); backdrop-filter:blur(4px); z-index:500; align-items:flex-end; }
     .modal-overlay.active { display:flex; }
-    .modal { background:var(--surface); border:1px solid var(--border); border-radius:18px 18px 0 0; padding:22px 22px 40px; width:100%; animation:slideUp 0.28s ease; }
+    .modal { background:var(--surface); border:1px solid var(--border); border-radius:18px 18px 0 0; padding:20px 20px 38px; width:100%; animation:slideUp 0.27s ease; }
     @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
-    .modal h3 { font-size:17px; font-weight:700; margin-bottom:7px; }
-    .modal p  { color:var(--text-muted); font-size:13px; margin-bottom:18px; }
-    .modal-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .modal h3 { font-size:16px; font-weight:700; margin-bottom:6px; }
+    .modal p  { color:var(--text-muted); font-size:13px; margin-bottom:16px; }
+    .modal-actions { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
 
-    .tips-list { font-size:13px; color:var(--text-muted); line-height:1.8; }
+    /* ── NOTE MODAL ── */
+    .note-modal { background:var(--surface); border:1px solid var(--border); border-radius:18px 18px 0 0; padding:20px 20px 38px; width:100%; animation:slideUp 0.27s ease; }
+    .note-modal h3 { font-size:16px; font-weight:700; margin-bottom:12px; }
+    .note-modal textarea { margin-bottom:12px; }
+
+    /* ── EARN LOG ── */
+    .earn-log { margin-top:12px; }
+    .earn-log-item { display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border); }
+    .earn-log-item:last-child { border-bottom:none; }
+    .earn-log-item .eli { font-size:12px; color:var(--text-muted); }
+    .earn-log-item .elv { font-family:var(--mono); font-size:14px; font-weight:700; color:var(--green); }
+    .earn-log-item .elx { font-size:12px; color:var(--red); cursor:pointer; padding:2px 6px; }
+
+    .tips-list { font-size:12px; color:var(--text-muted); line-height:1.9; }
+
+    .divider { height:1px; background:var(--border); margin:14px 0; }
+
+    /* ── PRIORITY CHIPS ── */
+    .chip.hot     { background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3); }
+    .chip.grocery { background:rgba(34,197,94,0.12); color:#4ade80; border:1px solid rgba(34,197,94,0.25); }
+
+    /* ── ROUTE OPTIMISE MODAL ── */
+    .opt-modal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 18px 18px 0 0; padding: 22px 20px 42px; width: 100%;
+      animation: slideUp 0.27s ease; max-height: 85vh; overflow-y: auto;
+    }
+    .opt-modal h3 { font-size:16px; font-weight:700; margin-bottom:5px; }
+    .opt-sub { font-size:12px; color:var(--text-muted); margin-bottom:16px; line-height:1.6; }
+
+    .opt-breakdown {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 4px 14px; margin-bottom: 16px;
+    }
+    .opt-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 0; border-bottom: 1px solid var(--border);
+    }
+    .opt-row:last-child { border-bottom: none; }
+    .opt-row-icon { font-size:20px; flex-shrink:0; width:28px; text-align:center; }
+    .opt-row-body { flex:1; min-width:0; }
+    .opt-row-body strong { display:block; font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .opt-row-body span   { font-size:11px; color:var(--text-muted); }
+    .opt-badge {
+      font-family: var(--mono); font-size:10px; font-weight:700;
+      padding: 3px 9px; border-radius: 100px; flex-shrink:0; white-space:nowrap;
+    }
+    .opt-badge.urgent { background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3); }
+    .opt-badge.flex   { background:rgba(34,197,94,0.12); color:#4ade80; border:1px solid rgba(34,197,94,0.25); }
+
+    .opt-summary {
+      background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 10px; padding: 12px 14px; margin-bottom: 16px;
+      font-size: 12px; color: var(--amber); line-height: 1.6;
+    }
+    .opt-summary strong { display:block; margin-bottom:3px; font-size:13px; }
+
+    .opt-actions { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:10px; }
+    .opt-footnote { font-size:11px; color:var(--text-muted); text-align:center; }
   </style>
 </head>
 <body>
 <div class="app">
 
+  <!-- DESIGN TODO BANNER -->
+  <div class="design-todo" id="designTodo">
+    🎨 TODO: Redesign for brighter, more ergonomic daytime layout
+    <button onclick="document.getElementById('designTodo').style.display='none'">✕</button>
+  </div>
+
+  <!-- HEADER -->
   <div class="header">
     <div class="header-left">
       <div class="logo-mark">🗺️</div>
       <h1>MERCATOR <span>GPS Route Tracker</span></h1>
     </div>
-    <div class="gps-pill" id="gpsStatus" onclick="toggleGPS()">
-      <div class="gps-dot"></div>
-      <span id="gpsText">NO GPS</span>
+    <div class="header-right">
+      <div class="shift-pill" id="shiftPill" onclick="switchTab('stats',3)">
+        ⏱ <span id="shiftPillTime">00:00</span>
+      </div>
+      <div class="gps-pill" id="gpsStatus" onclick="toggleGPS()">
+        <div class="gps-dot"></div>
+        <span id="gpsText">GPS</span>
+      </div>
     </div>
   </div>
 
+  <!-- TABS -->
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('route',0)">📍 Route</button>
     <button class="tab-btn"        onclick="switchTab('add',1)">➕ Add</button>
     <button class="tab-btn"        onclick="switchTab('scan',2)">📸 Scan</button>
+    <button class="tab-btn"        onclick="switchTab('stats',3)">💰 Stats</button>
   </div>
 
-  <!-- ══ ROUTE ══ -->
+  <!-- ══ ROUTE TAB ══ -->
   <div id="tab-route" class="tab-content active">
     <div class="container">
 
@@ -358,6 +474,8 @@
       <div class="hero-card" id="currentStopCard" style="display:none;">
         <div class="hero-label">Current Stop</div>
         <div class="hero-address" id="heroAddress">-</div>
+        <div class="hero-note" id="heroNote" style="display:none;">📝 <span id="heroNoteText"></span></div>
+        <div id="heroPriority" style="display:none;font-size:12px;font-weight:700;margin-bottom:12px;padding:7px 12px;border-radius:9px;align-items:center;gap:6px;background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.25);"></div>
         <div class="hero-meta">
           <div class="distance-chip" id="distanceChip"><span>📍</span><span id="distanceText">Calculating…</span></div>
           <div class="type-chip"     id="typeChip">-</div>
@@ -372,7 +490,7 @@
 
       <button class="btn btn-start" id="startBtn" onclick="startRoute()" style="display:none;">🚀 Start Route</button>
 
-      <div id="stopsListSection" style="display:none; margin-top:16px;">
+      <div id="stopsListSection" style="display:none; margin-top:14px;">
         <div class="section-header">
           <h3>All Stops</h3>
           <div class="count" id="stopsCount">0 stops</div>
@@ -382,14 +500,14 @@
 
       <div class="empty" id="emptyState">
         <span class="empty-icon">🗺️</span>
-        <div style="font-weight:600;margin-bottom:5px;">No stops yet</div>
+        <div style="font-weight:600;margin-bottom:4px;">No stops yet</div>
         <div style="font-size:12px;">Scan a screenshot or add stops manually</div>
       </div>
 
     </div>
   </div>
 
-  <!-- ══ ADD ══ -->
+  <!-- ══ ADD TAB ══ -->
   <div id="tab-add" class="tab-content">
     <div class="container">
       <div class="form-card">
@@ -397,6 +515,10 @@
         <div class="field">
           <label>Address</label>
           <input type="text" id="addressInput" placeholder="24 Marshall Road, Oxford, OX4 1EZ">
+        </div>
+        <div class="field">
+          <label>Order Note (optional)</label>
+          <input type="text" id="noteInput" placeholder="e.g. Leave at door, code #1234, call on arrival">
         </div>
         <div class="field field-row">
           <div>
@@ -414,19 +536,25 @@
             </select>
           </div>
         </div>
+        <div class="field">
+          <label>Order Category</label>
+          <select id="orderCategory">
+            <option value="hot">🔥 Hot food (restaurant)</option>
+            <option value="standard">🍽️ Standard (unknown)</option>
+            <option value="grocery">🛒 Grocery (Sainsbury's etc.)</option>
+          </select>
+        </div>
         <button class="btn btn-primary" onclick="addManualStop()">➕ Add Stop</button>
       </div>
       <button class="btn btn-danger" onclick="confirmClearAll()" id="clearBtn" style="display:none;">🗑 Clear All Stops</button>
     </div>
   </div>
 
-  <!-- ══ SCAN ══ -->
+  <!-- ══ SCAN TAB ══ -->
   <div id="tab-scan" class="tab-content">
     <div class="container">
 
-      <div class="api-key-card" id="apiKeyCard">
-        <!-- rendered by JS -->
-      </div>
+      <div class="api-key-card" id="apiKeyCard"></div>
 
       <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
         <span class="upload-icon">📸</span>
@@ -440,7 +568,7 @@
       <div class="form-card" id="ocrResultsCard" style="display:none;">
         <h3>Extracted Addresses</h3>
         <div id="ocrResults"></div>
-        <div style="height:12px;"></div>
+        <div style="height:10px;"></div>
         <button class="btn btn-primary" onclick="addAllOCRResults()">➕ Add All to Route</button>
       </div>
 
@@ -458,8 +586,75 @@
     </div>
   </div>
 
+  <!-- ══ STATS TAB ══ -->
+  <div id="tab-stats" class="tab-content">
+    <div class="container">
+
+      <!-- SHIFT TIMER -->
+      <div class="shift-panel">
+        <div class="shift-header">
+          <h3>⏱ Shift Timer</h3>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted);" id="shiftDateLabel">Not started</span>
+        </div>
+        <div class="shift-timer" id="shiftTimerDisplay">00:00:00</div>
+        <div class="shift-stats">
+          <div class="shift-stat">
+            <div class="sv" id="shiftDeliveries">0</div>
+            <div class="sl">Deliveries</div>
+          </div>
+          <div class="shift-stat">
+            <div class="sv green" id="shiftEarnings">£0.00</div>
+            <div class="sl">Earned</div>
+          </div>
+          <div class="shift-stat">
+            <div class="sv" id="shiftPerHour">£0.00</div>
+            <div class="sl">Per Hour</div>
+          </div>
+        </div>
+        <div class="shift-actions">
+          <button class="btn btn-amber" id="shiftToggleBtn" onclick="toggleShift()">▶ Start Shift</button>
+          <button class="btn btn-danger" onclick="confirmEndShift()" id="shiftEndBtn" style="margin-top:0;">⏹ End Shift</button>
+        </div>
+      </div>
+
+      <!-- EARNINGS LOG -->
+      <div class="earnings-panel">
+        <div class="earnings-header">
+          <h3>💰 Earnings</h3>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted);" id="earningsSession">This shift</span>
+        </div>
+        <div class="earnings-big">
+          <div class="amount" id="totalEarnings">£0.00</div>
+          <div class="label">Total this shift</div>
+        </div>
+        <div class="earnings-grid">
+          <div class="e-stat green">
+            <div class="ev" id="avgPerDelivery">£0.00</div>
+            <div class="el">Avg / delivery</div>
+          </div>
+          <div class="e-stat">
+            <div class="ev" id="totalDeliveries">0</div>
+            <div class="el">Deliveries</div>
+          </div>
+        </div>
+
+        <div class="earn-input-row">
+          <input type="number" id="earnAmount" placeholder="£ amount e.g. 4.50" step="0.01" min="0">
+          <button class="btn-log-earn" onclick="logEarning()">+ Log</button>
+        </div>
+
+        <div class="earn-log" id="earnLog"></div>
+      </div>
+
+      <!-- CLEAR EARNINGS -->
+      <button class="btn btn-danger" onclick="confirmClearEarnings()">🗑 Reset Shift Data</button>
+
+    </div>
+  </div>
+
 </div>
 
+<!-- CONFIRM MODAL -->
 <div class="modal-overlay" id="confirmModal">
   <div class="modal">
     <h3 id="modalTitle">Are you sure?</h3>
@@ -468,6 +663,33 @@
       <button class="btn btn-cancel"  onclick="closeModal()">Cancel</button>
       <button class="btn btn-primary" id="modalConfirmBtn">Confirm</button>
     </div>
+  </div>
+</div>
+
+<!-- NOTE EDIT MODAL -->
+<div class="modal-overlay" id="noteModal">
+  <div class="note-modal">
+    <h3>📝 Order Note</h3>
+    <textarea id="noteModalInput" rows="3" placeholder="e.g. Leave at door, ring bell twice, access code #1234…"></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeNoteModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNote()">Save Note</button>
+    </div>
+  </div>
+</div>
+
+<!-- ROUTE OPTIMISE MODAL -->
+<div class="modal-overlay" id="optimiseModal">
+  <div class="opt-modal">
+    <h3>🔥 Hot Food Priority</h3>
+    <p class="opt-sub">Your route has a mix of hot food and grocery deliveries. Hot food should reach customers faster — here's the breakdown:</p>
+    <div class="opt-breakdown" id="optBreakdown"></div>
+    <div class="opt-summary" id="optSummary"></div>
+    <div class="opt-actions">
+      <button class="btn btn-primary btn-opt-auto" onclick="applyOptimisedRoute()">🔥 Prioritise Hot Food</button>
+      <button class="btn btn-cancel btn-opt-keep" onclick="keepOriginalRoute()">Keep My Order</button>
+    </div>
+    <div class="opt-footnote">You can reorder stops manually in the route list at any time</div>
   </div>
 </div>
 
@@ -486,18 +708,52 @@ let ocrResults    = [];
 let modalCallback = null;
 const ARRIVAL_M   = 60;
 
+// Shift
+let shiftRunning   = false;
+let shiftStartTime = null;
+let shiftElapsed   = 0; // ms accumulated before current run
+let shiftInterval  = null;
+
+// Earnings
+let earnings = []; // [{amount, time, label}]
+
+// Note editing
+let editingNoteId = null;
+
+// ─────────────────────────────────────────────────
+// PERSIST (localStorage)
+// ─────────────────────────────────────────────────
+function save() {
+  try {
+    localStorage.setItem('merc_earnings', JSON.stringify(earnings));
+    localStorage.setItem('merc_shift_elapsed', shiftElapsed);
+    localStorage.setItem('merc_shift_running', shiftRunning);
+    if (shiftStartTime) localStorage.setItem('merc_shift_start', shiftStartTime);
+  } catch(e) {}
+}
+
+function load() {
+  try {
+    const e = localStorage.getItem('merc_earnings');
+    if (e) earnings = JSON.parse(e);
+    const el = localStorage.getItem('merc_shift_elapsed');
+    if (el) shiftElapsed = parseInt(el) || 0;
+    const sr = localStorage.getItem('merc_shift_running');
+    if (sr === 'true') {
+      const ss = localStorage.getItem('merc_shift_start');
+      if (ss) { shiftStartTime = parseInt(ss); shiftRunning = true; startShiftTick(); }
+    }
+  } catch(e) {}
+}
+
 // ─────────────────────────────────────────────────
 // API KEY
 // ─────────────────────────────────────────────────
-function getApiKey() {
-  try { return localStorage.getItem('merc_api_key') || ''; } catch { return ''; }
-}
+function getApiKey() { try { return localStorage.getItem('merc_api_key') || ''; } catch { return ''; } }
 
 function saveApiKey() {
   const key = document.getElementById('apiKeyInput').value.trim();
-  if (!key.startsWith('sk-ant-')) {
-    showToast('Key should start with sk-ant-…', 'error'); return;
-  }
+  if (!key.startsWith('sk-ant-')) { showToast('Key should start with sk-ant-…', 'error'); return; }
   try { localStorage.setItem('merc_api_key', key); } catch(e) {}
   renderApiKeyCard();
   showToast('API key saved ✓', 'success');
@@ -513,18 +769,14 @@ function renderApiKeyCard() {
   const key  = getApiKey();
   const card = document.getElementById('apiKeyCard');
   if (key) {
-    card.innerHTML = `
-      <h3>🔑 Claude API Key</h3>
-      <div class="key-saved">
-        ✓ Key saved &nbsp;·&nbsp; ${key.substring(0,18)}…
+    card.innerHTML = `<h3>🔑 Claude API Key</h3>
+      <div class="key-saved">✓ Key saved &nbsp;·&nbsp; ${key.substring(0,18)}…
         <button onclick="clearApiKey()" style="margin-left:auto;background:none;border:none;color:var(--red);cursor:pointer;font-size:12px;font-family:var(--mono);">Remove</button>
       </div>`;
   } else {
-    card.innerHTML = `
-      <h3>🔑 Claude API Key Required</h3>
+    card.innerHTML = `<h3>🔑 Claude API Key Required</h3>
       <p>Scan uses Claude AI vision to read your screenshots directly — no text conversion, no iOS restrictions.<br><br>
-      Get a free key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys.
-      Your key is saved only on this device.</p>
+      Get a free key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys. Your key is saved only on this device.</p>
       <div class="key-input-row">
         <input type="text" id="apiKeyInput" placeholder="sk-ant-api03-…" autocomplete="off" autocorrect="off" spellcheck="false">
         <button class="btn-save-key" onclick="saveApiKey()">Save</button>
@@ -551,7 +803,7 @@ function startGPS() {
   if (!navigator.geolocation) { showToast('GPS not supported', 'error'); return; }
   const pill = document.getElementById('gpsStatus');
   const txt  = document.getElementById('gpsText');
-  pill.className = 'gps-pill'; txt.textContent = 'STARTING…';
+  pill.className = 'gps-pill'; txt.textContent = '…';
 
   watchId = navigator.geolocation.watchPosition(
     pos => {
@@ -560,7 +812,7 @@ function startGPS() {
       txt.textContent = `±${Math.round(pos.coords.accuracy)}m`;
       if (routeActive && currentIdx < stops.length) checkArrival();
     },
-    () => { pill.className = 'gps-pill error'; txt.textContent = 'ERROR'; },
+    () => { pill.className = 'gps-pill error'; txt.textContent = 'ERR'; },
     { enableHighAccuracy: true, maximumAge: 2000, timeout: 10000 }
   );
 }
@@ -568,7 +820,7 @@ function startGPS() {
 function stopGPS() {
   if (watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
   document.getElementById('gpsStatus').className = 'gps-pill';
-  document.getElementById('gpsText').textContent = 'NO GPS';
+  document.getElementById('gpsText').textContent = 'GPS';
 }
 
 // ─────────────────────────────────────────────────
@@ -586,21 +838,17 @@ function checkArrival() {
   const s = stops[currentIdx];
   if (!s.lat || !s.lng) return;
   const d = haversine(userPos.lat, userPos.lng, s.lat, s.lng);
-
   const txt  = document.getElementById('distanceText');
   const chip = document.getElementById('distanceChip');
   txt.textContent = d < 1000 ? `${Math.round(d)}m away` : `${(d/1000).toFixed(1)}km away`;
-  chip.className  = 'distance-chip' + (d < 150 ? ' close' : d < 600 ? ' medium' : '');
-
+  chip.className  = 'distance-chip' + (d<150?' close':d<600?' medium':'');
   const aa = document.getElementById('arrivalAlert');
-  if (d <= ARRIVAL_M) {
-    aa.style.display = 'flex';
-    if (navigator.vibrate) navigator.vibrate([200,100,200]);
-  } else { aa.style.display = 'none'; }
+  if (d <= ARRIVAL_M) { aa.style.display='flex'; if(navigator.vibrate) navigator.vibrate([200,100,200]); }
+  else aa.style.display = 'none';
 }
 
 // ─────────────────────────────────────────────────
-// GEOCODE (mock — swap for Google Geocoding API)
+// GEOCODE (mock)
 // ─────────────────────────────────────────────────
 function geocodeAddress(stop) {
   stop.lat = 51.7520 + (Math.random()-0.5)*0.05;
@@ -615,13 +863,16 @@ function addManualStop() {
   if (!address) { showToast('Please enter an address', 'error'); return; }
   const stop = {
     id: Date.now()+Math.random(), address,
+    note: document.getElementById('noteInput').value.trim(),
     type: document.getElementById('stopType').value,
     platform: document.getElementById('platform').value,
+    orderCategory: document.getElementById('orderCategory').value,
     completed: false
   };
   geocodeAddress(stop);
   stops.push(stop);
   document.getElementById('addressInput').value = '';
+  document.getElementById('noteInput').value = '';
   showToast('Stop added ✓', 'success');
   updateDisplay();
   switchTab('route', 0);
@@ -634,12 +885,76 @@ function removeStop(id) {
   showToast('Stop removed', 'info');
 }
 
+// ─────────────────────────────────────────────────
+// ORDER CATEGORY DETECTION
+// ─────────────────────────────────────────────────
+const GROCERY_KEYWORDS = [
+  'sainsbury','waitrose','tesco','asda','morrisons','lidl','aldi','co-op','coop',
+  'marks & spencer','m&s','ocado','iceland','spar','costco','whole foods','wholefood',
+  'budgens','londis','nisa','one stop','farmfoods','booths','booker'
+];
+
+const HOT_FOOD_KEYWORDS = [
+  'mcdonald','kfc','burger king','nando','pizza','domino','papa john','subway',
+  'pret','greggs','five guys','leon','wagamama','itsu','pho','noodle','kebab',
+  'chicken','grill','curry','indian','chinese','thai','sushi','ramen','burrito',
+  'chipotle','taco','wok','balti','tandoori','fish and chip','chippy','cafe',
+  'restaurant','bistro','kitchen','diner','eatery','brasserie','trattoria'
+];
+
+function classifyStop(stop) {
+  // Only classify dropoffs — pickups keep their natural order
+  if (stop.type !== 'dropoff') return 'pickup';
+  const txt = (stop.address + ' ' + (stop.note || '')).toLowerCase();
+  if (GROCERY_KEYWORDS.some(k => txt.includes(k))) return 'grocery';
+  if (HOT_FOOD_KEYWORDS.some(k => txt.includes(k))) return 'hot';
+  return 'standard'; // unknown — treat like hot (urgent by default)
+}
+
+function getEstimatedDelay(stop) {
+  // Returns a human-readable urgency string
+  const cat = stop.orderCategory;
+  if (cat === 'hot')      return '🔥 Deliver first — goes cold quickly';
+  if (cat === 'grocery')  return '🛒 Can wait — ambient temperature';
+  if (cat === 'pickup')   return '📦 Collection stop';
+  return '🔥 Deliver promptly';
+}
+
+// ─────────────────────────────────────────────────
+// PENDING OPTIMISED ROUTE (set before showing modal)
+// ─────────────────────────────────────────────────
+let pendingOptimisedStops = null;
+
 function startRoute() {
   if (!stops.length) { showToast('Add some stops first!', 'error'); return; }
+
+  // Tag every stop with its category
+  stops.forEach(s => { s.orderCategory = classifyStop(s); });
+
   const done = stops.filter(s => s.completed);
-  const pick = stops.filter(s => !s.completed && s.type==='pickup');
-  const drop = stops.filter(s => !s.completed && s.type==='dropoff');
-  stops = [...done, ...pick, ...drop];
+  const inc  = stops.filter(s => !s.completed);
+
+  const pickups  = inc.filter(s => s.type === 'pickup');
+  const hotDrops = inc.filter(s => s.type === 'dropoff' && s.orderCategory !== 'grocery');
+  const grocDrops= inc.filter(s => s.type === 'dropoff' && s.orderCategory === 'grocery');
+
+  // Build the optimised order: pickups → hot/standard dropoffs → grocery dropoffs
+  const optimised = [...done, ...pickups, ...hotDrops, ...grocDrops];
+
+  // Only show the modal if there's actually a mix worth flagging
+  const hasMix = hotDrops.length > 0 && grocDrops.length > 0;
+
+  if (hasMix) {
+    pendingOptimisedStops = optimised;
+    showOptimiseModal(hotDrops, grocDrops);
+  } else {
+    // No conflict — just apply sensible order silently
+    stops = optimised;
+    launchRoute();
+  }
+}
+
+function launchRoute() {
   currentIdx = stops.findIndex(s => !s.completed);
   if (currentIdx === -1) currentIdx = 0;
   routeActive = true;
@@ -648,16 +963,88 @@ function startRoute() {
   showToast('Route started!', 'success');
 }
 
+function applyOptimisedRoute() {
+  if (pendingOptimisedStops) stops = pendingOptimisedStops;
+  pendingOptimisedStops = null;
+  document.getElementById('optimiseModal').classList.remove('active');
+  launchRoute();
+  showToast('🔥 Hot food prioritised', 'success');
+}
+
+function keepOriginalRoute() {
+  // Still do pickups first, but keep dropoffs in original add-order
+  const done = stops.filter(s => s.completed);
+  const pick = stops.filter(s => !s.completed && s.type === 'pickup');
+  const drop = stops.filter(s => !s.completed && s.type === 'dropoff');
+  stops = [...done, ...pick, ...drop];
+  pendingOptimisedStops = null;
+  document.getElementById('optimiseModal').classList.remove('active');
+  launchRoute();
+  showToast('Keeping your original order', 'info');
+}
+
+function showOptimiseModal(hotDrops, grocDrops) {
+  // Build breakdown rows
+  const breakdownEl = document.getElementById('optBreakdown');
+  const rows = [
+    ...hotDrops.map(s => ({
+      icon: s.orderCategory === 'hot' ? '🔥' : '🍽️',
+      label: s.address,
+      sub: getEstimatedDelay(s),
+      badge: 'URGENT',
+      cls: 'urgent'
+    })),
+    ...grocDrops.map(s => ({
+      icon: '🛒',
+      label: s.address,
+      sub: getEstimatedDelay(s),
+      badge: 'FLEXIBLE',
+      cls: 'flex'
+    }))
+  ];
+
+  breakdownEl.innerHTML = rows.map(r => `
+    <div class="opt-row">
+      <div class="opt-row-icon">${r.icon}</div>
+      <div class="opt-row-body">
+        <strong>${r.label}</strong>
+        <span>${r.sub}</span>
+      </div>
+      <div class="opt-badge ${r.cls}">${r.badge}</div>
+    </div>`).join('');
+
+  // Summary message
+  const avgColdMins = 15; // typical food-goes-cold window
+  document.getElementById('optSummary').innerHTML = `
+    <strong>⏱ Why this matters</strong>
+    Hot food typically goes cold within ${avgColdMins}–20 minutes.
+    You have <strong>${hotDrops.length} hot food</strong> and <strong>${grocDrops.length} grocery</strong> drop-off${grocDrops.length > 1 ? 's' : ''}.
+    Delivering hot food first could save up to ~${grocDrops.length * 3}–${grocDrops.length * 6} min on food quality.
+    Grocery items are ambient and can safely wait.`;
+
+  document.getElementById('optimiseModal').classList.add('active');
+}
+
+document.getElementById('optimiseModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) {
+    keepOriginalRoute();
+  }
+});
+
 function arrivedAtStop() {
   stops[currentIdx].completed = true;
-  const next = stops.findIndex((s,i) => i > currentIdx && !s.completed);
+  // Count completed dropoffs toward shift deliveries
+  if (stops[currentIdx] && stops[currentIdx].type === 'dropoff') {
+    updateShiftDeliveries();
+  }
+  const next = stops.findIndex((s,i) => i>currentIdx && !s.completed);
   if (next !== -1) {
     currentIdx = next;
     showToast(`Next: stop ${currentIdx+1}`, 'info');
   } else {
     routeActive = false; stopGPS();
-    document.getElementById('currentStopCard').style.display = 'none';
-    document.getElementById('arrivalAlert').style.display   = 'none';
+    document.getElementById('currentStopCard').style.display='none';
+    document.getElementById('arrivalAlert').style.display='none';
     showToast('🎉 All deliveries complete!', 'success');
   }
   updateDisplay();
@@ -673,21 +1060,169 @@ function confirmClearAll() {
 }
 
 function openGoogleMaps() {
-  const s = stops[currentIdx];
+  const s=stops[currentIdx];
   window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(s.address)}`, '_blank');
 }
 
 function openWaze() {
-  const s = stops[currentIdx];
+  const s=stops[currentIdx];
   window.open(`https://waze.com/ul?q=${encodeURIComponent(s.address)}&navigate=yes`, '_blank');
 }
 
 // ─────────────────────────────────────────────────
-// CLAUDE AI VISION — replaces Tesseract entirely
-// No Web Workers, no WASM, no iOS SecurityError
+// ORDER NOTES
+// ─────────────────────────────────────────────────
+function openNoteModal(id) {
+  editingNoteId = id;
+  const stop = stops.find(s=>s.id===id);
+  document.getElementById('noteModalInput').value = stop ? (stop.note||'') : '';
+  document.getElementById('noteModal').classList.add('active');
+}
+
+function closeNoteModal() {
+  document.getElementById('noteModal').classList.remove('active');
+  editingNoteId = null;
+}
+
+function saveNote() {
+  const note = document.getElementById('noteModalInput').value.trim();
+  const stop = stops.find(s=>s.id===editingNoteId);
+  if (stop) { stop.note = note; updateDisplay(); showToast('Note saved ✓', 'success'); }
+  closeNoteModal();
+}
+
+// ─────────────────────────────────────────────────
+// SHIFT TIMER
+// ─────────────────────────────────────────────────
+function toggleShift() {
+  if (!shiftRunning) {
+    shiftStartTime = Date.now();
+    shiftRunning   = true;
+    document.getElementById('shiftDateLabel').textContent = 'Started ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    document.getElementById('shiftToggleBtn').textContent = '⏸ Pause';
+    document.getElementById('shiftPill').classList.add('running');
+    startShiftTick();
+  } else {
+    shiftElapsed  += Date.now() - shiftStartTime;
+    shiftStartTime = null;
+    shiftRunning   = false;
+    clearInterval(shiftInterval);
+    document.getElementById('shiftToggleBtn').textContent = '▶ Resume';
+    document.getElementById('shiftPill').classList.remove('running');
+  }
+  save();
+  updateEarningsDisplay();
+}
+
+function startShiftTick() {
+  clearInterval(shiftInterval);
+  shiftInterval = setInterval(() => {
+    renderShiftTimer();
+    updateEarningsDisplay();
+  }, 1000);
+}
+
+function renderShiftTimer() {
+  const total = shiftRunning ? shiftElapsed + (Date.now()-shiftStartTime) : shiftElapsed;
+  const h = Math.floor(total/3600000);
+  const m = Math.floor((total%3600000)/60000);
+  const s = Math.floor((total%60000)/1000);
+  const fmt = n => String(n).padStart(2,'0');
+  document.getElementById('shiftTimerDisplay').textContent = `${fmt(h)}:${fmt(m)}:${fmt(s)}`;
+  document.getElementById('shiftPillTime').textContent = `${fmt(h)}:${fmt(m)}`;
+}
+
+function updateShiftDeliveries() {
+  const done = stops.filter(s=>s.completed && s.type==='dropoff').length;
+  document.getElementById('shiftDeliveries').textContent = done;
+  updateEarningsDisplay();
+}
+
+function confirmEndShift() {
+  showModal('End Shift?', 'This will stop the timer. Your earnings log will be kept.', () => {
+    if (shiftRunning) {
+      shiftElapsed += Date.now()-shiftStartTime;
+      shiftStartTime = null;
+      shiftRunning   = false;
+      clearInterval(shiftInterval);
+      document.getElementById('shiftToggleBtn').textContent = '▶ Start Shift';
+      document.getElementById('shiftPill').classList.remove('running');
+    }
+    renderShiftTimer();
+    save();
+    showToast('Shift ended', 'info');
+  });
+}
+
+// ─────────────────────────────────────────────────
+// EARNINGS
+// ─────────────────────────────────────────────────
+function logEarning() {
+  const val = parseFloat(document.getElementById('earnAmount').value);
+  if (isNaN(val) || val <= 0) { showToast('Enter a valid amount', 'error'); return; }
+  earnings.push({ amount: val, time: Date.now(), label: new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) });
+  document.getElementById('earnAmount').value = '';
+  save();
+  updateEarningsDisplay();
+  showToast(`£${val.toFixed(2)} logged ✓`, 'success');
+}
+
+function removeEarning(idx) {
+  earnings.splice(idx, 1);
+  save();
+  updateEarningsDisplay();
+}
+
+function updateEarningsDisplay() {
+  const total = earnings.reduce((a,e) => a+e.amount, 0);
+  const count = earnings.length;
+  document.getElementById('totalEarnings').textContent = `£${total.toFixed(2)}`;
+  document.getElementById('avgPerDelivery').textContent = count > 0 ? `£${(total/count).toFixed(2)}` : '£0.00';
+  document.getElementById('totalDeliveries').textContent = count;
+
+  // Per hour
+  const totalMs = shiftRunning ? shiftElapsed+(Date.now()-shiftStartTime) : shiftElapsed;
+  const hours = totalMs / 3600000;
+  const perHour = hours > 0.01 ? (total/hours).toFixed(2) : '0.00';
+  document.getElementById('shiftEarnings').textContent = `£${total.toFixed(2)}`;
+  document.getElementById('shiftPerHour').textContent  = `£${perHour}`;
+
+  // Log
+  const log = document.getElementById('earnLog');
+  if (earnings.length === 0) {
+    log.innerHTML = '<div style="font-size:12px;color:var(--text-muted);text-align:center;padding:12px 0;">No earnings logged yet</div>';
+    return;
+  }
+  log.innerHTML = [...earnings].reverse().map((e,i) => {
+    const realIdx = earnings.length-1-i;
+    return `<div class="earn-log-item">
+      <span class="eli">⏰ ${e.label}</span>
+      <span class="elv">£${e.amount.toFixed(2)}</span>
+      <span class="elx" onclick="removeEarning(${realIdx})">✕</span>
+    </div>`;
+  }).join('');
+}
+
+function confirmClearEarnings() {
+  showModal('Reset Shift Data?', 'This will clear all earnings and reset the timer.', () => {
+    earnings = []; shiftElapsed = 0; shiftRunning = false; shiftStartTime = null;
+    clearInterval(shiftInterval);
+    document.getElementById('shiftToggleBtn').textContent = '▶ Start Shift';
+    document.getElementById('shiftPill').classList.remove('running');
+    document.getElementById('shiftDateLabel').textContent = 'Not started';
+    document.getElementById('shiftDeliveries').textContent = '0';
+    renderShiftTimer();
+    updateEarningsDisplay();
+    try { localStorage.removeItem('merc_earnings'); localStorage.removeItem('merc_shift_elapsed'); localStorage.removeItem('merc_shift_running'); localStorage.removeItem('merc_shift_start'); } catch(e){}
+    showToast('Shift data reset', 'info');
+  });
+}
+
+// ─────────────────────────────────────────────────
+// CLAUDE AI VISION OCR
 // ─────────────────────────────────────────────────
 function fileToBase64(file) {
-  return new Promise((res, rej) => {
+  return new Promise((res,rej) => {
     const r = new FileReader();
     r.onload  = e => res(e.target.result.split(',')[1]);
     r.onerror = () => rej(new Error('Could not read file'));
@@ -713,10 +1248,11 @@ async function extractWithClaude(base64, mediaType) {
       messages: [{
         role: 'user',
         content: [
-          { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
-          { type: 'text', text: `This is a food delivery app screenshot (Uber Eats or Deliveroo).
+          { type:'image', source:{ type:'base64', media_type:mediaType, data:base64 } },
+          { type:'text', text:`This is a food delivery app screenshot (Uber Eats or Deliveroo).
 Extract ALL delivery addresses visible. Return ONLY a raw JSON array — no explanation, no markdown, no code fences.
-Each item: {"address":"full address string","platform":"ubereats"|"deliveroo","type":"pickup"|"dropoff"}
+Each item: {"address":"full address string","platform":"ubereats"|"deliveroo","type":"pickup"|"dropoff","note":"any special delivery instructions visible, or empty string","orderCategory":"hot"|"grocery"|"standard"}
+Use "hot" if the order is from a restaurant, takeaway, or food outlet. Use "grocery" if it is from a supermarket or grocery store (Sainsbury's, Waitrose, Tesco, Asda, Morrisons etc). Use "standard" if unclear.
 If none found, return: []` }
         ]
       }]
@@ -725,184 +1261,168 @@ If none found, return: []` }
 
   if (!resp.ok) {
     const err = await resp.json().catch(()=>({}));
-    const msg = err?.error?.message || `HTTP ${resp.status}`;
-    throw new Error(msg);
+    throw new Error(err?.error?.message || `HTTP ${resp.status}`);
   }
 
   const data = await resp.json();
-  const raw  = (data.content?.[0]?.text || '[]').replace(/```[a-z]*\n?/gi,'').replace(/```/g,'').trim();
-
-  try { const p = JSON.parse(raw); return Array.isArray(p) ? p : []; }
-  catch {
-    const m = raw.match(/\[[\s\S]*\]/);
-    if (m) return JSON.parse(m[0]);
-    return [];
-  }
+  const raw  = (data.content?.[0]?.text||'[]').replace(/```[a-z]*\n?/gi,'').replace(/```/g,'').trim();
+  try { const p=JSON.parse(raw); return Array.isArray(p)?p:[]; }
+  catch { const m=raw.match(/\[[\s\S]*\]/); if(m) return JSON.parse(m[0]); return []; }
 }
 
 async function handleScreenshots(event) {
   const files = Array.from(event.target.files);
   if (!files.length) return;
-
-  if (!getApiKey()) {
-    showToast('Add your Claude API key in the Scan tab first', 'error');
-    event.target.value = '';
-    return;
-  }
+  if (!getApiKey()) { showToast('Add your Claude API key first', 'error'); event.target.value=''; return; }
 
   ocrResults = [];
-  document.getElementById('ocrResultsCard').style.display = 'none';
-  document.getElementById('ocrResults').innerHTML = '';
+  document.getElementById('ocrResultsCard').style.display='none';
+  document.getElementById('ocrResults').innerHTML='';
 
   const progressList = document.getElementById('ocrProgressList');
-  progressList.innerHTML = '';
+  progressList.innerHTML='';
 
-  files.forEach((f, i) => {
+  files.forEach((f,i) => {
     progressList.innerHTML += `
       <div class="img-progress-row" id="imgRow${i}">
-        <div class="img-progress-name">${f.name || `Image ${i+1}`}</div>
+        <div class="img-progress-name">${f.name||`Image ${i+1}`}</div>
         <div class="img-progress-bar-wrap"><div class="img-progress-bar" id="imgBar${i}"></div></div>
         <div class="img-progress-status" id="imgStatus${i}">Waiting…</div>
       </div>`;
   });
 
-  for (let i = 0; i < files.length; i++) {
-    const f      = files[i];
-    const bar    = document.getElementById(`imgBar${i}`);
-    const status = document.getElementById(`imgStatus${i}`);
-
+  for (let i=0; i<files.length; i++) {
+    const f=files[i], bar=document.getElementById(`imgBar${i}`), status=document.getElementById(`imgStatus${i}`);
     try {
-      status.textContent = 'Reading image…';
-      bar.style.width    = '20%';
-
-      const base64    = await fileToBase64(f);
-      const mediaType = f.type || 'image/jpeg';
-
-      status.textContent = 'Asking Claude AI…';
-      bar.style.width    = '55%';
-
-      const found = await extractWithClaude(base64, mediaType);
-
-      bar.style.width = '100%';
-
-      if (found.length > 0) {
-        found.forEach(a => {
-          if (!ocrResults.some(x => x.address.toLowerCase() === a.address.toLowerCase()))
-            ocrResults.push(a);
-        });
-        bar.style.background = 'var(--green)';
-        status.textContent   = `✓ ${found.length} address${found.length>1?'es':''} found`;
-        status.style.color   = 'var(--green)';
+      status.textContent='Reading…'; bar.style.width='20%';
+      const base64=await fileToBase64(f), mediaType=f.type||'image/jpeg';
+      status.textContent='Asking Claude AI…'; bar.style.width='55%';
+      const found=await extractWithClaude(base64, mediaType);
+      bar.style.width='100%';
+      if (found.length>0) {
+        found.forEach(a => { if (!ocrResults.some(x=>x.address.toLowerCase()===a.address.toLowerCase())) ocrResults.push(a); });
+        bar.style.background='var(--green)'; status.textContent=`✓ ${found.length} found`; status.style.color='var(--green)';
       } else {
-        bar.style.background = 'var(--amber)';
-        status.textContent   = '⚠ No addresses found';
-        status.style.color   = 'var(--amber)';
+        bar.style.background='var(--amber)'; status.textContent='⚠ None found'; status.style.color='var(--amber)';
       }
-    } catch (err) {
-      console.error('[AI]', err);
-      bar.style.width      = '100%';
-      bar.style.background = 'var(--red)';
-      const hint = err.message === 'NO_KEY' ? 'No API key set' : (err.message||'Error').substring(0,55);
-      status.textContent   = `✕ ${hint}`;
-      status.style.color   = 'var(--red)';
+    } catch(err) {
+      bar.style.width='100%'; bar.style.background='var(--red)';
+      const hint=err.message==='NO_KEY'?'No API key':(err.message||'Error').substring(0,50);
+      status.textContent=`✕ ${hint}`; status.style.color='var(--red)';
     }
   }
 
-  if (ocrResults.length > 0) {
-    renderOCRResults();
-    showToast(`Found ${ocrResults.length} address(es)!`, 'success');
-  } else {
-    showToast('No addresses found — try manual entry', 'error');
-  }
-
-  event.target.value = '';
+  if (ocrResults.length>0) { renderOCRResults(); showToast(`Found ${ocrResults.length} address(es)!`,'success'); }
+  else showToast('No addresses found — try manual entry','error');
+  event.target.value='';
 }
 
 function renderOCRResults() {
-  document.getElementById('ocrResultsCard').style.display = 'block';
-  document.getElementById('ocrResults').innerHTML = ocrResults.map((r,i) => `
+  document.getElementById('ocrResultsCard').style.display='block';
+  document.getElementById('ocrResults').innerHTML=ocrResults.map((r,i)=>`
     <div class="ocr-result">
       <div>
         <div class="ocr-address">${r.address}</div>
-        <div class="ocr-postcode">${r.platform==='deliveroo'?'🍕 Deliveroo':'🍔 Uber Eats'} · ${r.type}</div>
+        <div class="ocr-postcode">${r.platform==='deliveroo'?'🍕 Deliveroo':'🍔 Uber Eats'} · ${r.type}${r.note?' · 📝':''}</div>
       </div>
       <button class="btn-sm" onclick="addOCRResult(${i})">Add</button>
     </div>`).join('');
 }
 
 function addOCRResult(i) {
-  const r = ocrResults[i];
-  const stop = { id:Date.now()+Math.random(), address:r.address, type:r.type||'dropoff', platform:r.platform||'ubereats', completed:false };
-  geocodeAddress(stop);
-  stops.push(stop);
-  showToast('Stop added ✓', 'success');
-  updateDisplay();
+  const r=ocrResults[i];
+  const stop={ id:Date.now()+Math.random(), address:r.address, note:r.note||'', type:r.type||'dropoff', platform:r.platform||'ubereats', orderCategory:r.orderCategory||null, completed:false };
+  geocodeAddress(stop); stops.push(stop);
+  showToast('Stop added ✓','success'); updateDisplay();
 }
 
 function addAllOCRResults() {
-  ocrResults.forEach((_,i) => addOCRResult(i));
-  document.getElementById('ocrResultsCard').style.display = 'none';
-  ocrResults = [];
-  switchTab('route', 0);
+  ocrResults.forEach((_,i)=>addOCRResult(i));
+  document.getElementById('ocrResultsCard').style.display='none';
+  ocrResults=[];
+  switchTab('route',0);
 }
 
 // ─────────────────────────────────────────────────
 // DISPLAY
 // ─────────────────────────────────────────────────
 function updateDisplay() {
-  const has       = stops.length > 0;
-  const completed = stops.filter(s=>s.completed).length;
-  const remaining = stops.length - completed;
+  const has=stops.length>0, completed=stops.filter(s=>s.completed).length, remaining=stops.length-completed;
+  document.getElementById('emptyState').style.display=has?'none':'block';
+  document.getElementById('statsRow').style.display=has?'grid':'none';
+  document.getElementById('statRemaining').textContent=remaining;
+  document.getElementById('statCompleted').textContent=completed;
+  document.getElementById('statTotal').textContent=stops.length;
 
-  document.getElementById('emptyState').style.display = has ? 'none' : 'block';
-  document.getElementById('statsRow').style.display    = has ? 'grid' : 'none';
-  document.getElementById('statRemaining').textContent = remaining;
-  document.getElementById('statCompleted').textContent = completed;
-  document.getElementById('statTotal').textContent     = stops.length;
+  const card=document.getElementById('currentStopCard');
+  if (routeActive && currentIdx<stops.length && !stops[currentIdx].completed) {
+    const s=stops[currentIdx];
+    card.style.display='block';
+    document.getElementById('heroAddress').textContent=s.address;
+    document.getElementById('distanceText').textContent=userPos?'Calculating…':'GPS off';
 
-  const card = document.getElementById('currentStopCard');
-  if (routeActive && currentIdx < stops.length && !stops[currentIdx].completed) {
-    const s = stops[currentIdx];
-    card.style.display = 'block';
-    document.getElementById('heroAddress').textContent  = s.address;
-    document.getElementById('distanceText').textContent = userPos ? 'Calculating…' : 'GPS off';
-    const tc = document.getElementById('typeChip');
-    tc.textContent = s.type==='pickup' ? '📦 Pickup' : '🏠 Dropoff';
-    tc.className   = 'type-chip '+s.type;
-    const pc = document.getElementById('platformChip');
-    pc.textContent = s.platform==='ubereats' ? '🍔 Uber Eats' : '🍕 Deliveroo';
-    pc.className   = 'platform-chip '+s.platform;
+    const noteEl=document.getElementById('heroNote'), noteTxt=document.getElementById('heroNoteText');
+    if (s.note) { noteTxt.textContent=s.note; noteEl.style.display='flex'; }
+    else noteEl.style.display='none';
+
+    const tc=document.getElementById('typeChip');
+    tc.textContent=s.type==='pickup'?'📦 Pickup':'🏠 Dropoff'; tc.className='type-chip '+s.type;
+    const pc=document.getElementById('platformChip');
+    pc.textContent=s.platform==='ubereats'?'🍔 Uber Eats':'🍕 Deliveroo'; pc.className='platform-chip '+s.platform;
+
+    // Priority chip on hero
+    const prioEl = document.getElementById('heroPriority');
+    if (s.type === 'dropoff' && s.orderCategory === 'hot') {
+      prioEl.textContent = '🔥 Hot food — deliver first'; prioEl.style.display = 'flex';
+    } else if (s.type === 'dropoff' && s.orderCategory === 'grocery') {
+      prioEl.textContent = '🛒 Grocery — ambient, flexible'; prioEl.style.display = 'flex';
+    } else {
+      prioEl.style.display = 'none';
+    }
   } else {
-    card.style.display = 'none';
-    document.getElementById('arrivalAlert').style.display = 'none';
+    card.style.display='none';
+    document.getElementById('arrivalAlert').style.display='none';
   }
 
-  document.getElementById('startBtn').style.display = (has && !routeActive && remaining>0) ? 'block' : 'none';
-  document.getElementById('stopsListSection').style.display = has ? 'block' : 'none';
-  document.getElementById('stopsCount').textContent = `${stops.length} stop${stops.length!==1?'s':''}`;
-  document.getElementById('clearBtn').style.display = has ? 'block' : 'none';
+  document.getElementById('startBtn').style.display=(has&&!routeActive&&remaining>0)?'block':'none';
+  document.getElementById('stopsListSection').style.display=has?'block':'none';
+  document.getElementById('stopsCount').textContent=`${stops.length} stop${stops.length!==1?'s':''}`;
+  document.getElementById('clearBtn').style.display=has?'block':'none';
 
   renderStopsList();
+  updateShiftDeliveries();
 }
 
 function renderStopsList() {
-  document.getElementById('stopsList').innerHTML = stops.map((s,i) => {
-    const isActive = routeActive && i===currentIdx && !s.completed;
-    const cls = ['stop-item', s.completed?'completed':'', isActive?'active-stop':''].filter(Boolean).join(' ');
-    return `
-      <div class="${cls}">
-        <div class="stop-index">${s.completed?'✓':i+1}</div>
-        <div class="stop-body">
-          <div class="stop-chips">
-            <span class="chip ${s.type}">${s.type}</span>
-            <span class="chip ${s.platform}">${s.platform==='ubereats'?'Uber':'Deliveroo'}</span>
-            ${s.completed?'<span class="chip done">Done</span>':''}
-            ${isActive?'<span class="chip" style="background:rgba(91,91,214,0.15);color:#a5b4fc;">Now</span>':''}
-          </div>
-          <div class="stop-address">${s.address}</div>
+  document.getElementById('stopsList').innerHTML=stops.map((s,i)=>{
+    const isActive=routeActive&&i===currentIdx&&!s.completed;
+    const cls=['stop-item',s.completed?'completed':'',isActive?'active-stop':''].filter(Boolean).join(' ');
+
+    // Priority chip for dropoffs that have been classified
+    let priorityChip = '';
+    if (s.type === 'dropoff' && s.orderCategory) {
+      if (s.orderCategory === 'hot')     priorityChip = '<span class="chip hot">🔥 Hot food</span>';
+      else if (s.orderCategory === 'grocery') priorityChip = '<span class="chip grocery">🛒 Grocery</span>';
+    }
+
+    return `<div class="${cls}">
+      <div class="stop-index">${s.completed?'✓':i+1}</div>
+      <div class="stop-body">
+        <div class="stop-chips">
+          <span class="chip ${s.type}">${s.type}</span>
+          <span class="chip ${s.platform}">${s.platform==='ubereats'?'Uber':'Deliveroo'}</span>
+          ${priorityChip}
+          ${s.completed?'<span class="chip done">Done</span>':''}
+          ${isActive?'<span class="chip" style="background:rgba(91,91,214,0.15);color:#a5b4fc;">Now</span>':''}
         </div>
-        ${!s.completed&&!routeActive?`<div class="stop-actions"><div class="icon-btn" onclick="removeStop(${s.id})">✕</div></div>`:''}
-      </div>`;
+        <div class="stop-address">${s.address}</div>
+        ${s.note?`<div class="stop-note">📝 ${s.note}</div>`:''}
+      </div>
+      ${!s.completed?`<div class="stop-actions">
+        <div class="icon-btn" title="Edit note" onclick="openNoteModal(${s.id})" style="font-size:11px;">📝</div>
+        ${!routeActive?`<div class="icon-btn" onclick="removeStop(${s.id})">✕</div>`:''}
+      </div>`:''}
+    </div>`;
   }).join('');
 }
 
@@ -910,19 +1430,18 @@ function renderStopsList() {
 // MODAL / TOAST
 // ─────────────────────────────────────────────────
 function showModal(title, body, cb) {
-  document.getElementById('modalTitle').textContent = title;
-  document.getElementById('modalBody').textContent  = body;
-  modalCallback = cb;
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalBody').textContent=body;
+  modalCallback=cb;
   document.getElementById('confirmModal').classList.add('active');
 }
 function closeModal() { document.getElementById('confirmModal').classList.remove('active'); modalCallback=null; }
-
-document.getElementById('modalConfirmBtn').addEventListener('click', () => { if(modalCallback) modalCallback(); closeModal(); });
-document.getElementById('confirmModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
+document.getElementById('modalConfirmBtn').addEventListener('click', ()=>{ if(modalCallback) modalCallback(); closeModal(); });
+document.getElementById('confirmModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeModal(); });
+document.getElementById('noteModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeNoteModal(); });
 
 function showToast(msg, type='info') {
-  const c=document.getElementById('toastContainer');
-  const t=document.createElement('div');
+  const c=document.getElementById('toastContainer'), t=document.createElement('div');
   t.className=`toast ${type}`; t.textContent=msg; c.appendChild(t);
   setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity 0.3s'; setTimeout(()=>t.remove(),300); }, 2600);
 }
@@ -930,7 +1449,10 @@ function showToast(msg, type='info') {
 // ─────────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────────
+load();
 renderApiKeyCard();
+renderShiftTimer();
+updateEarningsDisplay();
 updateDisplay();
 </script>
 </body>
