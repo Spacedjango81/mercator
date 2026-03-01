@@ -366,7 +366,17 @@
     .note-modal h3 { font-size:16px; font-weight:700; margin-bottom:12px; }
     .note-modal textarea { margin-bottom:12px; }
 
-    /* ── EARN LOG ── */
+    /* ── EARN SCAN RESULTS ── */
+    .earn-scan-result {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px; margin-bottom: 8px;
+      display: flex; align-items: center; justify-content: space-between; gap: 9px;
+    }
+    .earn-scan-amount { font-family:var(--mono); font-size:20px; font-weight:700; color:var(--green); }
+    .earn-scan-meta   { font-size:11px; color:var(--text-muted); margin-top:2px; }
+    .earn-scan-actions { display:flex; gap:6px; flex-shrink:0; }
+    .btn-confirm-earn { padding:7px 12px; border-radius:7px; font-size:12px; font-weight:700; background:var(--green-dim); border:1px solid rgba(34,197,94,0.3); color:var(--green); cursor:pointer; }
+    .btn-reject-earn  { padding:7px 10px; border-radius:7px; font-size:12px; background:var(--surface); border:1px solid var(--border); color:var(--text-muted); cursor:pointer; }
     .earn-log { margin-top:12px; }
     .earn-log-item { display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border); }
     .earn-log-item:last-child { border-bottom:none; }
@@ -382,7 +392,76 @@
     .chip.hot     { background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3); }
     .chip.grocery { background:rgba(34,197,94,0.12); color:#4ade80; border:1px solid rgba(34,197,94,0.25); }
 
-    /* ── ROUTE OVERVIEW (inside hero card) ── */
+    /* ── SPOTIFY PANEL ── */
+    .spotify-panel {
+      background: #121212;
+      border: 1px solid rgba(30,215,96,0.25);
+      border-radius: 15px;
+      padding: 16px;
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .spotify-panel::before {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 100px; height: 100px;
+      background: radial-gradient(circle, rgba(30,215,96,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .spotify-header {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+    }
+    .spotify-logo {
+      width: 28px; height: 28px; flex-shrink: 0;
+    }
+    .spotify-header h3 {
+      font-family: var(--mono); font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px; color: #1ed760;
+      margin-bottom: 0;
+    }
+    .spotify-header span {
+      font-size: 10px; color: rgba(255,255,255,0.4); margin-left: auto;
+      font-family: var(--mono);
+    }
+
+    /* Saved playlists */
+    .playlist-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .playlist-item {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; padding: 10px 12px; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .playlist-item:active { transform: scale(0.98); }
+    .playlist-item:hover  { border-color: rgba(30,215,96,0.4); background: rgba(30,215,96,0.07); }
+    .playlist-item .pl-icon { font-size: 20px; flex-shrink: 0; }
+    .playlist-item .pl-body { flex: 1; min-width: 0; }
+    .playlist-item .pl-name { font-size: 13px; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .playlist-item .pl-sub  { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 1px; font-family: var(--mono); }
+    .playlist-item .pl-play { font-size: 18px; flex-shrink: 0; }
+    .playlist-item .pl-del  { font-size: 12px; color: rgba(255,255,255,0.25); cursor: pointer; padding: 4px 6px; flex-shrink: 0; }
+    .playlist-item .pl-del:hover { color: var(--red); }
+
+    /* Add playlist row */
+    .spotify-add { display: flex; gap: 8px; margin-bottom: 10px; }
+    .spotify-add input {
+      flex: 1; padding: 10px 12px;
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 9px; color: white; font-size: 13px; font-family: var(--sans);
+    }
+    .spotify-add input::placeholder { color: rgba(255,255,255,0.3); }
+    .spotify-add input:focus { outline: none; border-color: rgba(30,215,96,0.5); }
+    .btn-spotify-add {
+      padding: 10px 14px; background: #1ed760; color: #000;
+      border: none; border-radius: 9px; font-weight: 700; font-size: 13px;
+      cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    }
+    .btn-spotify-add:active { transform: scale(0.97); }
+    .spotify-hint { font-size: 11px; color: rgba(255,255,255,0.3); line-height: 1.6; }
+    .spotify-hint a { color: rgba(30,215,96,0.7); text-decoration: none; }
     .route-overview { display:flex; flex-direction:column; gap:5px; }
     .route-overview-label { font-family:var(--mono); font-size:9px; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:3px; }
     .rov-stop {
@@ -608,6 +687,29 @@
   <div id="tab-stats" class="tab-content">
     <div class="container">
 
+      <!-- SPOTIFY -->
+      <div class="spotify-panel">
+        <div class="spotify-header">
+          <svg class="spotify-logo" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="12" fill="#1ed760"/>
+            <path d="M17.9 10.9C14.7 9 9.35 8.8 6.3 9.75c-.5.15-1-.15-1.15-.6-.15-.5.15-1 .6-1.15 3.55-1.05 9.4-.85 13.1 1.35.45.25.6.85.35 1.3-.25.35-.85.5-1.3.25zm-.1 2.8c-.25.4-.75.5-1.15.25-2.65-1.6-6.65-2.1-9.75-1.15-.4.1-.85-.1-.95-.5-.1-.4.1-.85.5-.95 3.55-1.05 7.95-.55 10.95 1.35.4.2.5.75.4 1zm-1.3 2.7c-.2.35-.6.45-.95.25-2.3-1.4-5.2-1.75-8.6-.95-.35.1-.7-.15-.75-.5-.1-.35.15-.7.5-.75 3.75-.85 6.95-.45 9.5 1.1.35.15.45.6.3.85z" fill="#000"/>
+          </svg>
+          <h3>Spotify</h3>
+          <span>Shift playlists</span>
+        </div>
+
+        <div class="playlist-list" id="playlistList"></div>
+
+        <div class="spotify-add">
+          <input type="text" id="playlistInput" placeholder="Paste Spotify playlist link…" autocorrect="off" spellcheck="false">
+          <button class="btn-spotify-add" onclick="addPlaylist()">+ Add</button>
+        </div>
+        <div class="spotify-hint">
+          In Spotify: open a playlist → Share → <strong style="color:rgba(255,255,255,0.5)">Copy link</strong> → paste above.<br>
+          Tap ▶ to open it directly in the Spotify app.
+        </div>
+      </div>
+
       <!-- SHIFT TIMER -->
       <div class="shift-panel">
         <div class="shift-header">
@@ -654,6 +756,23 @@
             <div class="ev" id="totalDeliveries">0</div>
             <div class="el">Deliveries</div>
           </div>
+        </div>
+
+        <!-- SCAN EARNINGS SCREENSHOTS -->
+        <div class="upload-zone upload-zone-sm" onclick="document.getElementById('earnFileInput').click()" style="margin-bottom:12px;">
+          <input type="file" id="earnFileInput" accept="image/*" multiple onchange="handleEarningsScreenshots(event)" style="display:none;">
+          <span style="font-size:24px;display:block;margin-bottom:6px;">📸</span>
+          <div style="font-size:13px;font-weight:600;margin-bottom:2px;">Scan Payment Screenshot</div>
+          <div style="font-size:11px;color:var(--text-muted);">Uber Eats or Deliveroo payment screens</div>
+        </div>
+
+        <div id="earnScanProgress"></div>
+        <div id="earnScanResults"></div>
+
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="flex:1;height:1px;background:var(--border);"></div>
+          <span style="font-size:10px;color:var(--text-muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.5px;">or enter manually</span>
+          <div style="flex:1;height:1px;background:var(--border);"></div>
         </div>
 
         <div class="earn-input-row">
@@ -1267,6 +1386,139 @@ function removeEarning(idx) {
   updateEarningsDisplay();
 }
 
+// ─────────────────────────────────────────────────
+// EARNINGS SCREENSHOT SCAN
+// ─────────────────────────────────────────────────
+async function extractEarningsWithClaude(base64, mediaType) {
+  const key = getApiKey();
+  if (!key) throw new Error('NO_KEY');
+
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 256,
+      messages: [{
+        role: 'user',
+        content: [
+          { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
+          { type: 'text', text: `This is a food delivery app screenshot (Uber Eats or Deliveroo).
+Extract ALL payment or earnings amounts visible — these could be delivery fees, tips, total pay, order earnings, or boost/surge amounts.
+Return ONLY a raw JSON array — no explanation, no markdown, no code fences.
+Each item: {"amount": 4.50, "label": "short description e.g. Delivery fee, Tip, Total earnings", "platform": "ubereats"|"deliveroo"}
+Only include actual £ amounts paid to the driver. Ignore subtotals that include restaurant food costs.
+If no earnings amounts found, return: []` }
+        ]
+      }]
+    })
+  });
+
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `HTTP ${resp.status}`);
+  }
+
+  const data = await resp.json();
+  const raw  = (data.content?.[0]?.text || '[]').replace(/```[a-z]*\n?/gi, '').replace(/```/g, '').trim();
+  try { const p = JSON.parse(raw); return Array.isArray(p) ? p : []; }
+  catch { const m = raw.match(/\[[\s\S]*\]/); if (m) return JSON.parse(m[0]); return []; }
+}
+
+let pendingEarnings = []; // scanned but not yet confirmed
+
+async function handleEarningsScreenshots(event) {
+  const files = Array.from(event.target.files);
+  if (!files.length) return;
+  if (!getApiKey()) { showToast('Add your Claude API key in the Scan tab first', 'error'); event.target.value = ''; return; }
+
+  pendingEarnings = [];
+  const progressEl = document.getElementById('earnScanProgress');
+  const resultsEl  = document.getElementById('earnScanResults');
+  resultsEl.innerHTML = '';
+  progressEl.innerHTML = '';
+
+  files.forEach((f, i) => {
+    progressEl.innerHTML += `
+      <div class="img-progress-row" id="earnRow${i}">
+        <div class="img-progress-name">${f.name || `Image ${i+1}`}</div>
+        <div class="img-progress-bar-wrap"><div class="img-progress-bar" id="earnBar${i}"></div></div>
+        <div class="img-progress-status" id="earnStatus${i}">Waiting…</div>
+      </div>`;
+  });
+
+  for (let i = 0; i < files.length; i++) {
+    const f = files[i];
+    const bar    = document.getElementById(`earnBar${i}`);
+    const status = document.getElementById(`earnStatus${i}`);
+    try {
+      status.textContent = 'Reading…'; bar.style.width = '20%';
+      const base64 = await fileToBase64(f);
+      status.textContent = 'Asking Claude AI…'; bar.style.width = '55%';
+      const found = await extractEarningsWithClaude(base64, f.type || 'image/jpeg');
+      bar.style.width = '100%';
+      if (found.length > 0) {
+        found.forEach(e => pendingEarnings.push(e));
+        bar.style.background = 'var(--green)';
+        status.textContent = `✓ ${found.length} amount${found.length > 1 ? 's' : ''} found`;
+        status.style.color = 'var(--green)';
+      } else {
+        bar.style.background = 'var(--amber)';
+        status.textContent = '⚠ No amounts found';
+        status.style.color = 'var(--amber)';
+      }
+    } catch(err) {
+      bar.style.width = '100%'; bar.style.background = 'var(--red)';
+      const hint = err.message === 'NO_KEY' ? 'No API key' : (err.message || 'Error').substring(0, 50);
+      status.textContent = `✕ ${hint}`; status.style.color = 'var(--red)';
+    }
+  }
+
+  if (pendingEarnings.length > 0) {
+    renderEarningScanResults();
+    showToast(`Found ${pendingEarnings.length} payment amount(s) — confirm to log`, 'success');
+  } else {
+    showToast('No payment amounts found in screenshots', 'error');
+  }
+  event.target.value = '';
+}
+
+function renderEarningScanResults() {
+  const el = document.getElementById('earnScanResults');
+  el.innerHTML = pendingEarnings.map((e, i) => `
+    <div class="earn-scan-result" id="earnScanItem${i}">
+      <div>
+        <div class="earn-scan-amount">£${Number(e.amount).toFixed(2)}</div>
+        <div class="earn-scan-meta">${e.label || 'Payment'} · ${e.platform === 'deliveroo' ? '🍕 Deliveroo' : '🍔 Uber Eats'}</div>
+      </div>
+      <div class="earn-scan-actions">
+        <button class="btn-confirm-earn" onclick="confirmScannedEarning(${i})">✓ Log</button>
+        <button class="btn-reject-earn"  onclick="rejectScannedEarning(${i})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function confirmScannedEarning(i) {
+  const e = pendingEarnings[i];
+  if (!e) return;
+  const timeLabel = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  earnings.push({ amount: Number(e.amount), time: Date.now(), label: `${e.label || 'Payment'} (scanned) ${timeLabel}` });
+  save();
+  updateEarningsDisplay();
+  document.getElementById(`earnScanItem${i}`).style.display = 'none';
+  showToast(`£${Number(e.amount).toFixed(2)} logged ✓`, 'success');
+}
+
+function rejectScannedEarning(i) {
+  document.getElementById(`earnScanItem${i}`).style.display = 'none';
+  showToast('Amount discarded', 'info');
+}
+
 function updateEarningsDisplay() {
   const total = earnings.reduce((a,e) => a+e.amount, 0);
   const count = earnings.length;
@@ -1543,10 +1795,108 @@ function showToast(msg, type='info') {
 }
 
 // ─────────────────────────────────────────────────
+// SPOTIFY PLAYLISTS
+// ─────────────────────────────────────────────────
+let playlists = []; // [{name, url, emoji}]
+
+const PLAYLIST_EMOJIS = ['🎵','🔥','🚗','🎶','⚡','🎸','🎤','🥁','🎺','🎷'];
+
+function loadPlaylists() {
+  try {
+    const p = localStorage.getItem('merc_playlists');
+    if (p) playlists = JSON.parse(p);
+  } catch(e) {}
+}
+
+function savePlaylists() {
+  try { localStorage.setItem('merc_playlists', JSON.stringify(playlists)); } catch(e) {}
+}
+
+function spotifyUrlToApp(url) {
+  // Convert https://open.spotify.com/playlist/ID to spotify:playlist:ID
+  // so it opens directly in the Spotify app rather than the browser
+  try {
+    const match = url.match(/open\.spotify\.com\/(playlist|album|track|artist)\/([a-zA-Z0-9]+)/);
+    if (match) return `spotify:${match[1]}:${match[2]}`;
+  } catch(e) {}
+  return url; // fallback to original URL
+}
+
+function extractPlaylistName(url) {
+  // Try to pull a readable name from the URL, otherwise use a default
+  try {
+    const match = url.match(/open\.spotify\.com\/(playlist|album|track|artist)\/([a-zA-Z0-9]+)/);
+    if (match) {
+      const type = match[1].charAt(0).toUpperCase() + match[1].slice(1);
+      return `My ${type}`;
+    }
+  } catch(e) {}
+  return 'My Playlist';
+}
+
+function addPlaylist() {
+  const input = document.getElementById('playlistInput');
+  const raw   = input.value.trim();
+  if (!raw) { showToast('Paste a Spotify link first', 'error'); return; }
+
+  // Accept both https://open.spotify.com and spotify: URI formats
+  const isValid = raw.includes('open.spotify.com') || raw.startsWith('spotify:');
+  if (!isValid) { showToast('Doesn\'t look like a Spotify link', 'error'); return; }
+
+  // Ask for a name
+  const name = prompt('Give this playlist a name (e.g. "Driving vibes"):') || extractPlaylistName(raw);
+
+  const emoji = PLAYLIST_EMOJIS[playlists.length % PLAYLIST_EMOJIS.length];
+  playlists.push({ name, url: raw, emoji });
+  savePlaylists();
+  input.value = '';
+  renderPlaylists();
+  showToast('Playlist saved ✓', 'success');
+}
+
+function openPlaylist(idx) {
+  const pl  = playlists[idx];
+  const app = spotifyUrlToApp(pl.url);
+  // Try app URI first (opens Spotify directly); fallback to web URL
+  window.location.href = app;
+  // Small delay then try web URL as fallback if app didn't open
+  setTimeout(() => { window.open(pl.url, '_blank'); }, 800);
+}
+
+function deletePlaylist(idx) {
+  playlists.splice(idx, 1);
+  savePlaylists();
+  renderPlaylists();
+  showToast('Playlist removed', 'info');
+}
+
+function renderPlaylists() {
+  const list = document.getElementById('playlistList');
+  if (!playlists.length) {
+    list.innerHTML = `<div style="font-size:12px;color:rgba(255,255,255,0.25);text-align:center;padding:10px 0;">
+      No playlists saved yet — add one below
+    </div>`;
+    return;
+  }
+  list.innerHTML = playlists.map((pl, i) => `
+    <div class="playlist-item">
+      <div class="pl-icon">${pl.emoji}</div>
+      <div class="pl-body">
+        <div class="pl-name">${pl.name}</div>
+        <div class="pl-sub">open.spotify.com</div>
+      </div>
+      <div class="pl-play" onclick="openPlaylist(${i})">▶</div>
+      <div class="pl-del" onclick="deletePlaylist(${i})">✕</div>
+    </div>`).join('');
+}
+
+// ─────────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────────
 load();
+loadPlaylists();
 renderApiKeyCard();
+renderPlaylists();
 renderShiftTimer();
 updateEarningsDisplay();
 updateDisplay();
