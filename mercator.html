@@ -382,6 +382,23 @@
     .chip.hot     { background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3); }
     .chip.grocery { background:rgba(34,197,94,0.12); color:#4ade80; border:1px solid rgba(34,197,94,0.25); }
 
+    /* ── ROUTE OVERVIEW (inside hero card) ── */
+    .route-overview { display:flex; flex-direction:column; gap:5px; }
+    .route-overview-label { font-family:var(--mono); font-size:9px; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:3px; }
+    .rov-stop {
+      display:flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:8px; font-size:12px; font-weight:500;
+      border: 1px solid transparent;
+    }
+    .rov-stop.current { background:rgba(91,91,214,0.2); border-color:rgba(91,91,214,0.4); color:white; }
+    .rov-stop.hot-stop     { background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.2); color:#fca5a5; }
+    .rov-stop.grocery-stop { background:rgba(34,197,94,0.08); border-color:rgba(34,197,94,0.18); color:#86efac; }
+    .rov-stop.pickup-stop  { background:rgba(6,182,212,0.08); border-color:rgba(6,182,212,0.18); color:#67e8f9; }
+    .rov-stop.done-stop    { opacity:0.3; text-decoration:line-through; }
+    .rov-num { font-family:var(--mono); font-size:10px; font-weight:700; width:16px; text-align:center; flex-shrink:0; }
+    .rov-addr { flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .rov-icon { flex-shrink:0; font-size:13px; }
+
     /* ── ROUTE OPTIMISE MODAL ── */
     .opt-modal {
       background: var(--surface); border: 1px solid var(--border);
@@ -482,10 +499,11 @@
           <div class="platform-chip" id="platformChip">-</div>
         </div>
         <div class="hero-actions">
-          <button class="btn btn-nav-google" onclick="openGoogleMaps()">🗺️ Google Maps</button>
-          <button class="btn btn-nav-waze"   onclick="openWaze()">🧭 Waze</button>
+          <button class="btn btn-nav-google" onclick="openGoogleMaps()">🗺️ Full Route in Maps</button>
+          <button class="btn btn-nav-waze"   onclick="openWaze()">🧭 This Stop in Waze</button>
         </div>
         <button class="btn btn-complete" onclick="confirmComplete()">✓ Mark as Complete</button>
+        <div id="routeOverview" style="margin-top:12px;"></div>
       </div>
 
       <button class="btn btn-start" id="startBtn" onclick="startRoute()" style="display:none;">🚀 Start Route</button>
@@ -721,19 +739,33 @@ let earnings = []; // [{amount, time, label}]
 let editingNoteId = null;
 
 // ─────────────────────────────────────────────────
-// PERSIST (localStorage)
+// PERSIST (localStorage) — saves everything so
+// switching to Google Maps and back loses nothing
 // ─────────────────────────────────────────────────
 function save() {
   try {
-    localStorage.setItem('merc_earnings', JSON.stringify(earnings));
-    localStorage.setItem('merc_shift_elapsed', shiftElapsed);
-    localStorage.setItem('merc_shift_running', shiftRunning);
+    // Route state
+    localStorage.setItem('merc_stops',        JSON.stringify(stops));
+    localStorage.setItem('merc_currentIdx',   currentIdx);
+    localStorage.setItem('merc_routeActive',  routeActive);
+    // Earnings / shift
+    localStorage.setItem('merc_earnings',     JSON.stringify(earnings));
+    localStorage.setItem('merc_shift_elapsed',shiftElapsed);
+    localStorage.setItem('merc_shift_running',shiftRunning);
     if (shiftStartTime) localStorage.setItem('merc_shift_start', shiftStartTime);
   } catch(e) {}
 }
 
 function load() {
   try {
+    // Route state
+    const s = localStorage.getItem('merc_stops');
+    if (s) stops = JSON.parse(s);
+    const ci = localStorage.getItem('merc_currentIdx');
+    if (ci !== null) currentIdx = parseInt(ci) || 0;
+    const ra = localStorage.getItem('merc_routeActive');
+    if (ra === 'true') routeActive = true;
+    // Earnings / shift
     const e = localStorage.getItem('merc_earnings');
     if (e) earnings = JSON.parse(e);
     const el = localStorage.getItem('merc_shift_elapsed');
@@ -873,6 +905,7 @@ function addManualStop() {
   stops.push(stop);
   document.getElementById('addressInput').value = '';
   document.getElementById('noteInput').value = '';
+  save();
   showToast('Stop added ✓', 'success');
   updateDisplay();
   switchTab('route', 0);
@@ -881,6 +914,7 @@ function addManualStop() {
 function removeStop(id) {
   stops = stops.filter(s => s.id !== id);
   if (currentIdx >= stops.length) currentIdx = Math.max(0, stops.length-1);
+  save();
   updateDisplay();
   showToast('Stop removed', 'info');
 }
@@ -959,6 +993,7 @@ function launchRoute() {
   if (currentIdx === -1) currentIdx = 0;
   routeActive = true;
   startGPS();
+  save();
   updateDisplay();
   showToast('Route started!', 'success');
 }
@@ -1047,6 +1082,7 @@ function arrivedAtStop() {
     document.getElementById('arrivalAlert').style.display='none';
     showToast('🎉 All deliveries complete!', 'success');
   }
+  save();
   updateDisplay();
 }
 
@@ -1054,24 +1090,82 @@ function confirmComplete() { showModal('Mark Complete?', 'Advance to the next st
 
 function confirmClearAll() {
   showModal('Clear All Stops?', 'Remove all stops and reset the route?', () => {
-    stops=[]; currentIdx=0; routeActive=false; stopGPS(); updateDisplay();
+    stops=[]; currentIdx=0; routeActive=false; stopGPS();
+    save();
+    updateDisplay();
     showToast('All stops cleared', 'info');
   });
 }
 
+// ─────────────────────────────────────────────────
+// NAVIGATION — full multi-stop route
+// Opens ALL remaining stops as a single Google Maps
+// or Waze route so you never need to return to the app
+// ─────────────────────────────────────────────────
+function buildRouteAddresses() {
+  // Current stop is destination; all subsequent incomplete stops are waypoints
+  const remaining = stops.filter((s,i) => !s.completed && i >= currentIdx);
+  return remaining.map(s => s.address);
+}
+
 function openGoogleMaps() {
-  const s=stops[currentIdx];
-  window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(s.address)}`, '_blank');
+  const addrs = buildRouteAddresses();
+  if (!addrs.length) return;
+
+  if (addrs.length === 1) {
+    // Single stop — simple destination link
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(addrs[0])}&travelmode=driving`, '_blank');
+    return;
+  }
+
+  // Multi-stop: first = destination, rest = waypoints
+  // Google Maps supports up to 9 waypoints in the URL
+  const destination = encodeURIComponent(addrs[addrs.length - 1]);
+  const waypoints   = addrs.slice(0, -1).map(a => encodeURIComponent(a)).join('|');
+  window.open(`https://www.google.com/maps/dir/?api=1&destination=${destination}&waypoints=${waypoints}&travelmode=driving`, '_blank');
 }
 
 function openWaze() {
-  const s=stops[currentIdx];
+  // Waze only supports a single destination at a time, so navigate to current stop
+  const s = stops[currentIdx];
+  if (!s) return;
   window.open(`https://waze.com/ul?q=${encodeURIComponent(s.address)}&navigate=yes`, '_blank');
 }
 
 // ─────────────────────────────────────────────────
-// ORDER NOTES
+// ROUTE OVERVIEW — colour-coded mini strip in hero
 // ─────────────────────────────────────────────────
+function stopIcon(s) {
+  if (s.type === 'pickup')              return '📦';
+  if (s.orderCategory === 'hot')        return '🔥';
+  if (s.orderCategory === 'grocery')    return '🛒';
+  return '🏠';
+}
+
+function stopRowClass(s, i) {
+  if (s.completed)                      return 'done-stop';
+  if (i === currentIdx)                 return 'current';
+  if (s.type === 'pickup')              return 'pickup-stop';
+  if (s.orderCategory === 'grocery')    return 'grocery-stop';
+  return 'hot-stop'; // hot or standard dropoff
+}
+
+function renderRouteOverview() {
+  const el = document.getElementById('routeOverview');
+  if (!el || !routeActive || stops.length === 0) { if(el) el.innerHTML=''; return; }
+
+  const rows = stops.map((s,i) => `
+    <div class="rov-stop ${stopRowClass(s,i)}">
+      <span class="rov-num">${s.completed ? '✓' : i+1}</span>
+      <span class="rov-icon">${stopIcon(s)}</span>
+      <span class="rov-addr">${s.address}</span>
+    </div>`).join('');
+
+  el.innerHTML = `<div class="route-overview">
+    <div class="route-overview-label">Full route · ${stops.filter(s=>!s.completed).length} remaining</div>
+    ${rows}
+  </div>`;
+}
 function openNoteModal(id) {
   editingNoteId = id;
   const stop = stops.find(s=>s.id===id);
@@ -1087,7 +1181,7 @@ function closeNoteModal() {
 function saveNote() {
   const note = document.getElementById('noteModalInput').value.trim();
   const stop = stops.find(s=>s.id===editingNoteId);
-  if (stop) { stop.note = note; updateDisplay(); showToast('Note saved ✓', 'success'); }
+  if (stop) { stop.note = note; save(); updateDisplay(); showToast('Note saved ✓', 'success'); }
   closeNoteModal();
 }
 
@@ -1333,6 +1427,7 @@ function addOCRResult(i) {
   const r=ocrResults[i];
   const stop={ id:Date.now()+Math.random(), address:r.address, note:r.note||'', type:r.type||'dropoff', platform:r.platform||'ubereats', orderCategory:r.orderCategory||null, completed:false };
   geocodeAddress(stop); stops.push(stop);
+  save();
   showToast('Stop added ✓','success'); updateDisplay();
 }
 
@@ -1390,6 +1485,7 @@ function updateDisplay() {
   document.getElementById('clearBtn').style.display=has?'block':'none';
 
   renderStopsList();
+  renderRouteOverview();
   updateShiftDeliveries();
 }
 
